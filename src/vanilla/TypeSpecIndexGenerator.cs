@@ -32,6 +32,20 @@ namespace AutoRest.TypeScript
 
             CompositeType[] orderedModelTemplateModels = codeModel.OrderedModelTemplateModels.ToArray();
 
+            IDictionary<CompositeType, IList<CompositeType>> derivedTypes = new Dictionary<CompositeType, IList<CompositeType>>();
+            foreach (CompositeType compositeType in orderedModelTemplateModels)
+            {
+                CompositeType baseModelType = compositeType.BaseModelType;
+                if (baseModelType != null)
+                {
+                    if (!derivedTypes.ContainsKey(baseModelType))
+                    {
+                        derivedTypes.Add(baseModelType, new List<CompositeType>());
+                    }
+                    derivedTypes[baseModelType].Add(compositeType);
+                }
+            }
+
             tsFile.Import(GetTypeSpecImports(orderedModelTemplateModels));
 
             ISet<CompositeType> generatedModelTypes = new HashSet<CompositeType>();
@@ -42,7 +56,7 @@ namespace AutoRest.TypeScript
                 tsFile.DocumentationComment(compositeType.Summary, compositeType.Documentation);
                 tsFile.ExportConstVariable(compositeType.Name, "CompositeTypeSpec", tsValue =>
                 {
-                    GenerateTypeSpec(tsValue, compositeType, generatedModelTypes, isXML, isTopLevelCompositeSpec: true);
+                    GenerateTypeSpec(tsValue, compositeType, generatedModelTypes, derivedTypes, isXML, isTopLevelCompositeSpec: true);
                 });
 
                 generatedModelTypes.Add(compositeType);
@@ -189,7 +203,7 @@ namespace AutoRest.TypeScript
         /// <param name="isXML">Whether or not the generated TypeSpec should provided XML-specific properties.</param>
         /// <param name="isTopLevelCompositeSpec">Whether or not the constructed TypeSpec is a top-level CompositeTypeSpec. Top-level CompositeTypeSpecs will be exported.</param>
         /// <param name="serializedName">If this is a property inside of an CompositeTypeSpec, this will be the serialized name of the property.</param>
-        private static void GenerateTypeSpec(TSValue tsValue, IModelType type, IEnumerable<CompositeType> generatedCompositeTypes, bool isXML, bool isTopLevelCompositeSpec = false)
+        private static void GenerateTypeSpec(TSValue tsValue, IModelType type, IEnumerable<CompositeType> generatedCompositeTypes, IDictionary<CompositeType,IList<CompositeType>> derivedTypesMap, bool isXML, bool isTopLevelCompositeSpec = false)
         {
             if (type is CompositeType compositeType)
             {
@@ -208,50 +222,86 @@ namespace AutoRest.TypeScript
                 {
                     tsValue.FunctionCall("compositeSpec", argumentList =>
                     {
-                        argumentList.QuotedString(compositeType.Name);
-                        argumentList.Object(propertySpecs =>
+                        argumentList.Object((TSObject compositeSpecProperties) =>
                         {
-                            foreach (Property property in compositeType.ComposedProperties)
+                            compositeSpecProperties.Property("typeName", $"\"{compositeType.Name}\"");
+                            if (compositeType.BaseIsPolymorphic || compositeType.IsPolymorphic)
                             {
-                                propertySpecs.DocumentationComment(property.Summary, property.Documentation);
-                                propertySpecs.Property(property.Name, (TSObject propertySpec) =>
+                                compositeSpecProperties.Property("polymorphism", (TSObject polymorphism) =>
                                 {
-                                    if (property.IsRequired)
+                                    if (compositeType.BaseModelType != null)
                                     {
-                                        propertySpec.Property("required", true);
+                                        polymorphism.Property("inheritsFrom", compositeType.BaseModelType.Name);
                                     }
 
-                                    if (isXML)
+                                    if (derivedTypesMap.TryGetValue(compositeType, out IList<CompositeType> derivedTypes))
                                     {
-                                        if (property.XmlIsAttribute)
+                                        polymorphism.Property("inheritedBy", (TSArray inheritedBy) =>
                                         {
-                                            propertySpec.Property("xmlIsAttribute", true);
-                                        }
-
-                                        if (property.XmlIsWrapped)
-                                        {
-                                            propertySpec.Property("xmlIsWrapped", true);
-                                        }
-
-                                        if (!string.IsNullOrEmpty(property.XmlName) && property.Name != property.XmlName)
-                                        {
-                                            propertySpec.Property("xmlName", $"\"{property.XmlName}\"");
-                                        }
+                                            foreach (CompositeType derivedType in derivedTypes)
+                                            {
+                                                inheritedBy.QuotedString(derivedType.Name);
+                                            }
+                                        });
                                     }
-                                    else
+
+                                    Property polymorphicDiscriminatorProperty = compositeType.PolymorphicDiscriminatorProperty;
+                                    if (compositeType.BaseModelType == null || polymorphicDiscriminatorProperty.Name != compositeType.BaseModelType.PolymorphicDiscriminatorProperty.Name)
                                     {
-                                        if (!string.IsNullOrEmpty(property.SerializedName) && property.Name != property.SerializedName)
+                                        polymorphism.Property("discriminatorPropertyName", $"\"{polymorphicDiscriminatorProperty.Name}\"");
+                                        if (polymorphicDiscriminatorProperty.Name != polymorphicDiscriminatorProperty.SerializedName)
                                         {
-                                            propertySpec.Property("serializedName", $"\"{property.SerializedName}\"");
+                                            polymorphism.Property("discriminatorPropertySerializedName", $"\"{polymorphicDiscriminatorProperty.SerializedName}\"");
                                         }
                                     }
 
-                                    propertySpec.Property("valueSpec", propertyValue =>
-                                    {
-                                        GenerateTypeSpec(propertyValue, property.ModelType, generatedCompositeTypes, isXML);
-                                    });
+                                    polymorphism.Property("discriminatorPropertyValue", $"\"{compositeType.SerializedName}\"");
                                 });
                             }
+                            compositeSpecProperties.Property("propertySpecs", (TSObject propertySpecs) =>
+                            {
+                                foreach (Property property in compositeType.ComposedProperties)
+                                {
+                                    propertySpecs.DocumentationComment(property.Summary, property.Documentation);
+                                    propertySpecs.Property(property.Name, (TSObject propertySpec) =>
+                                    {
+                                        if (property.IsRequired)
+                                        {
+                                            propertySpec.Property("required", true);
+                                        }
+
+                                        if (isXML)
+                                        {
+                                            if (property.XmlIsAttribute)
+                                            {
+                                                propertySpec.Property("xmlIsAttribute", true);
+                                            }
+
+                                            if (property.XmlIsWrapped)
+                                            {
+                                                propertySpec.Property("xmlIsWrapped", true);
+                                            }
+
+                                            if (!string.IsNullOrEmpty(property.XmlName) && property.Name != property.XmlName)
+                                            {
+                                                propertySpec.Property("xmlName", $"\"{property.XmlName}\"");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!string.IsNullOrEmpty(property.SerializedName) && property.Name != property.SerializedName)
+                                            {
+                                                propertySpec.Property("serializedName", $"\"{property.SerializedName}\"");
+                                            }
+                                        }
+
+                                        propertySpec.Property("valueSpec", propertyValue =>
+                                        {
+                                            GenerateTypeSpec(propertyValue, property.ModelType, generatedCompositeTypes, derivedTypesMap, isXML);
+                                        });
+                                    });
+                                }
+                            });
                         });
                     });
                 }
@@ -260,14 +310,14 @@ namespace AutoRest.TypeScript
             {
                 tsValue.FunctionCall("dictionarySpec", argumentList =>
                 {
-                    GenerateTypeSpec(argumentList, dictionaryType.ValueType, generatedCompositeTypes, isXML);
+                    GenerateTypeSpec(argumentList, dictionaryType.ValueType, generatedCompositeTypes, derivedTypesMap, isXML);
                 });
             }
             else if (type is SequenceType sequenceType)
             {
                 tsValue.FunctionCall("sequenceSpec", argumentList =>
                 {
-                    GenerateTypeSpec(argumentList, sequenceType.ElementType, generatedCompositeTypes, isXML);
+                    GenerateTypeSpec(argumentList, sequenceType.ElementType, generatedCompositeTypes, derivedTypesMap, isXML);
                 });
             }
             else if (type is EnumType enumType)
