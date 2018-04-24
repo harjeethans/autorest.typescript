@@ -88,6 +88,36 @@ namespace AutoRest.TypeScript
         }
 
         /// <summary>
+        /// Add an exported constant variable to this TSFile.
+        /// </summary>
+        /// <param name="variableName">The name of the variable to add.</param>
+        /// <param name="variableType">The type of the variable to add.</param>
+        /// <param name="valueAction">The action that will be invoked to create the value of the added variable.</param>
+        public void ConstVariable(string variableName, string variableType, Action<TSValue> valueAction)
+        {
+            builder.Text($"const {variableName}: {variableType} = ");
+            try
+            {
+                valueAction.Invoke(new TSValue(builder));
+            }
+            finally
+            {
+                builder.Line(";");
+            }
+        }
+
+        /// <summary>
+        /// Add an exported constant variable to this TSFile.
+        /// </summary>
+        /// <param name="variableName">The name of the variable to add.</param>
+        /// <param name="variableType">The type of the variable to add.</param>
+        /// <param name="valueAction">The action that will be invoked to create the value of the added variable.</param>
+        public void ConstVariable(string variableName, string variableType, Action<TSObject> valueAction)
+        {
+            ConstVariable(variableName, variableType, (TSValue tsValue) => tsValue.Object(valueAction));
+        }
+
+        /// <summary>
         /// Get the contents of this TSFile.
         /// </summary>
         /// <returns>The contents of this TSFile.</returns>

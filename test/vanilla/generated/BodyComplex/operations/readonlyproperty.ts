@@ -11,9 +11,21 @@
 import * as msRest from "ms-rest-js";
 import * as Models from "../models";
 import * as Mappers from "../models/mappers";
+import * as TypeSpecs from "../models/typeSpecs";
 import { AutoRestComplexTestService } from "../autoRestComplexTestService";
 
 const WebResource = msRest.WebResource;
+const OperationSpec = msRest.OperationSpec;
+const HttpMethod = msRest.HttpMethod;
+
+const getValidOperationSpec: OperationSpec = {
+  requestHttpMethod: HttpMethod.GET
+};
+
+const putValidOperationSpec: OperationSpec = {
+  requestHttpMethod: HttpMethod.PUT,
+  requestBodySpec: TypeSpecs.ReadonlyObj
+};
 
 /** Class representing a Readonlyproperty. */
 export class Readonlyproperty {
@@ -26,282 +38,282 @@ export class Readonlyproperty {
     this.client = client;
   }
 
-  /**
-   * Get complex types that have readonly properties
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} - The deserialized result object.
-   *
-   * @reject {Error|ServiceError} - The error object.
-   */
-  async getValidWithHttpOperationResponse(options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
-    let client = this.client;
+    /**
+     * Get complex types that have readonly properties
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
+    async getValidWithHttpOperationResponse(options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+      let client = this.client;
 
-    // Construct URL
-    let baseUrl = this.client.baseUri;
-    let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'complex/readonlyproperty/valid';
+      // Construct URL
+      let baseUrl = this.client.baseUri;
+      let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'complex/readonlyproperty/valid';
 
-    // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'GET';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
-    // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
-    if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
-        if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+      // Create HTTP transport objects
+      let httpRequest = new WebResource();
+      httpRequest.method = 'GET';
+      httpRequest.url = requestUrl;
+      httpRequest.headers = {};
+      // Set Headers
+      httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+      if(options && options.customHeaders) {
+        for(let headerName in options.customHeaders) {
+          if (options.customHeaders.hasOwnProperty(headerName)) {
+            httpRequest.headers[headerName] = options.customHeaders[headerName];
+          }
         }
       }
-    }
-    // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
+      // Send Request
+      let operationRes: msRest.HttpOperationResponse;
+      try {
+        operationRes = await client.pipeline(httpRequest);
+        let response = operationRes.response;
+        let statusCode = response.status;
+        if (statusCode !== 200) {
+          let error = new msRest.RestError(operationRes.bodyAsText as string);
+          error.statusCode = response.status;
+          error.request = msRest.stripRequest(httpRequest);
+          error.response = msRest.stripResponse(response);
+          let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
+          try {
+            if (parsedErrorResponse) {
+              let internalError = null;
+              if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
+              error.code = internalError ? internalError.code : parsedErrorResponse.code;
+              error.message = internalError ? internalError.message : parsedErrorResponse.message;
+            }
+            if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
+              let resultMapper = Mappers.ErrorModel;
+              error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
+            }
+          } catch (defaultError) {
+            error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
+                             `- "${operationRes.bodyAsText}" for the default response.`;
+            return Promise.reject(error);
           }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
           return Promise.reject(error);
         }
+        // Deserialize Response
+        if (statusCode === 200) {
+          let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+          try {
+            if (parsedResponse !== null && parsedResponse !== undefined) {
+              let resultMapper = Mappers.ReadonlyObj;
+              operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+            }
+          } catch (error) {
+            let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
+            deserializationError.request = msRest.stripRequest(httpRequest);
+            deserializationError.response = msRest.stripResponse(response);
+            return Promise.reject(deserializationError);
+          }
+        }
+
+      } catch(err) {
+        return Promise.reject(err);
+      }
+
+      return Promise.resolve(operationRes);
+    }
+
+    /**
+     * Put complex types that have readonly properties
+     *
+     * @param {ReadonlypropertyPutValidOptionalParams} [options] Optional
+     * Parameters.
+     *
+     * @returns {Promise} A promise is returned
+     *
+     * @resolve {HttpOperationResponse} - The deserialized result object.
+     *
+     * @reject {Error|ServiceError} - The error object.
+     */
+    async putValidWithHttpOperationResponse(options?: Models.ReadonlypropertyPutValidOptionalParams): Promise<msRest.HttpOperationResponse> {
+      let client = this.client;
+      let size = (options && options.size !== undefined) ? options.size : undefined;
+      // Validate
+      try {
+        if (size !== null && size !== undefined && typeof size !== 'number') {
+          throw new Error('size must be of type number.');
+        }
+      } catch (error) {
         return Promise.reject(error);
       }
-      // Deserialize Response
-      if (statusCode === 200) {
-        let parsedResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedResponse !== null && parsedResponse !== undefined) {
-            let resultMapper = Mappers.ReadonlyObj;
-            operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
-          }
-        } catch (error) {
-          let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-          deserializationError.request = msRest.stripRequest(httpRequest);
-          deserializationError.response = msRest.stripResponse(response);
-          return Promise.reject(deserializationError);
+      let complexBody: any = {};
+      try {
+        if (size !== null && size !== undefined)
+        {
+          complexBody.size = size;
         }
-      }
-
-    } catch(err) {
-      return Promise.reject(err);
-    }
-
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * Put complex types that have readonly properties
-   *
-   * @param {ReadonlypropertyPutValidOptionalParams} [options] Optional
-   * Parameters.
-   *
-   * @returns {Promise} A promise is returned
-   *
-   * @resolve {HttpOperationResponse} - The deserialized result object.
-   *
-   * @reject {Error|ServiceError} - The error object.
-   */
-  async putValidWithHttpOperationResponse(options?: Models.ReadonlypropertyPutValidOptionalParams): Promise<msRest.HttpOperationResponse> {
-    let client = this.client;
-    let size = (options && options.size !== undefined) ? options.size : undefined;
-    // Validate
-    try {
-      if (size !== null && size !== undefined && typeof size !== 'number') {
-        throw new Error('size must be of type number.');
-      }
-    } catch (error) {
-      return Promise.reject(error);
-    }
-    let complexBody: any = {};
-    try {
-      if (size !== null && size !== undefined)
-      {
-        complexBody.size = size;
-      }
-    } catch (error) {
-      return Promise.reject(error);
-    }
-
-    // Construct URL
-    let baseUrl = this.client.baseUri;
-    let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'complex/readonlyproperty/valid';
-
-    // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'PUT';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
-    // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
-    if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
-        if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
-        }
-      }
-    }
-    // Serialize Request
-    let requestContent = null;
-    let requestModel = null;
-    try {
-      if (complexBody !== null && complexBody !== undefined) {
-        let requestModelMapper = Mappers.ReadonlyObj;
-        requestModel = client.serializer.serialize(requestModelMapper, complexBody, 'complexBody');
-        requestContent = JSON.stringify(requestModel);
-      }
-    } catch (error) {
-      let serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
-          `payload - ${JSON.stringify(complexBody, null, 2)}.`);
-      return Promise.reject(serializationError);
-    }
-    httpRequest.body = requestContent;
-    // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
+      } catch (error) {
         return Promise.reject(error);
       }
 
-    } catch(err) {
-      return Promise.reject(err);
-    }
+      // Construct URL
+      let baseUrl = this.client.baseUri;
+      let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'complex/readonlyproperty/valid';
 
-    return Promise.resolve(operationRes);
-  }
-
-  /**
-   * Get complex types that have readonly properties
-   *
-   * @param {RequestOptionsBase} [options] Optional Parameters.
-   *
-   * @param {ServiceCallback} callback - The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, response)
-   *
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *
-   *                      {Models.ReadonlyObj} [result]   - The deserialized result object if an error did not occur.
-   *                      See {@link Models.ReadonlyObj} for more information.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *
-   *                      {Response} [response] - The HTTP Response stream if an error did not occur.
-   */
-  getValid(): Promise<Models.ReadonlyObj>;
-  getValid(options: msRest.RequestOptionsBase): Promise<Models.ReadonlyObj>;
-  getValid(callback: msRest.ServiceCallback<Models.ReadonlyObj>): void;
-  getValid(options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ReadonlyObj>): void;
-  getValid(options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ReadonlyObj>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<Models.ReadonlyObj>;
-    if (!callback) {
-      return this.getValidWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ReadonlyObj);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.getValidWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
+      // Create HTTP transport objects
+      let httpRequest = new WebResource();
+      httpRequest.method = 'PUT';
+      httpRequest.url = requestUrl;
+      httpRequest.headers = {};
+      // Set Headers
+      httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+      if(options && options.customHeaders) {
+        for(let headerName in options.customHeaders) {
+          if (options.customHeaders.hasOwnProperty(headerName)) {
+            httpRequest.headers[headerName] = options.customHeaders[headerName];
+          }
         }
-        let result = data.parsedBody as Models.ReadonlyObj;
-        return cb(err, result, data.request, data.response);
-      });
-    }
-  }
-
-  /**
-   * Put complex types that have readonly properties
-   *
-   * @param {ReadonlypropertyPutValidOptionalParams} [options] Optional
-   * Parameters.
-   *
-   * @param {ServiceCallback} callback - The callback.
-   *
-   * @returns {ServiceCallback} callback(err, result, request, response)
-   *
-   *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
-   *
-   *                      {void} [result]   - The deserialized result object if an error did not occur.
-   *
-   *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
-   *
-   *                      {Response} [response] - The HTTP Response stream if an error did not occur.
-   */
-  putValid(): Promise<void>;
-  putValid(options: Models.ReadonlypropertyPutValidOptionalParams): Promise<void>;
-  putValid(callback: msRest.ServiceCallback<void>): void;
-  putValid(options: Models.ReadonlypropertyPutValidOptionalParams, callback: msRest.ServiceCallback<void>): void;
-  putValid(options?: Models.ReadonlypropertyPutValidOptionalParams, callback?: msRest.ServiceCallback<void>): any {
-    if (!callback && typeof options === 'function') {
-      callback = options;
-      options = undefined;
-    }
-    let cb = callback as msRest.ServiceCallback<void>;
-    if (!callback) {
-      return this.putValidWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
-      }).catch((err: Error) => {
-        return Promise.reject(err);
-      });
-    } else {
-      msRest.promiseToCallback(this.putValidWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
-        if (err) {
-          return cb(err);
+      }
+      // Serialize Request
+      let requestContent = null;
+      let requestModel = null;
+      try {
+        if (complexBody !== null && complexBody !== undefined) {
+          let requestModelMapper = Mappers.ReadonlyObj;
+          requestModel = client.serializer.serialize(requestModelMapper, complexBody, 'complexBody');
+          requestContent = JSON.stringify(requestModel);
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
-      });
+      } catch (error) {
+        let serializationError = new Error(`Error "${error.message}" occurred in serializing the ` +
+            `payload - ${JSON.stringify(complexBody, null, 2)}.`);
+        return Promise.reject(serializationError);
+      }
+      httpRequest.body = requestContent;
+      // Send Request
+      let operationRes: msRest.HttpOperationResponse;
+      try {
+        operationRes = await client.pipeline(httpRequest);
+        let response = operationRes.response;
+        let statusCode = response.status;
+        if (statusCode !== 200) {
+          let error = new msRest.RestError(operationRes.bodyAsText as string);
+          error.statusCode = response.status;
+          error.request = msRest.stripRequest(httpRequest);
+          error.response = msRest.stripResponse(response);
+          let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
+          try {
+            if (parsedErrorResponse) {
+              let internalError = null;
+              if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
+              error.code = internalError ? internalError.code : parsedErrorResponse.code;
+              error.message = internalError ? internalError.message : parsedErrorResponse.message;
+            }
+            if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
+              let resultMapper = Mappers.ErrorModel;
+              error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
+            }
+          } catch (defaultError) {
+            error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
+                             `- "${operationRes.bodyAsText}" for the default response.`;
+            return Promise.reject(error);
+          }
+          return Promise.reject(error);
+        }
+
+      } catch(err) {
+        return Promise.reject(err);
+      }
+
+      return Promise.resolve(operationRes);
     }
-  }
+
+    /**
+     * Get complex types that have readonly properties
+     *
+     * @param {RequestOptionsBase} [options] Optional Parameters.
+     *
+     * @param {ServiceCallback} callback - The callback.
+     *
+     * @returns {ServiceCallback} callback(err, result, request, response)
+     *
+     *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
+     *
+     *                      {Models.ReadonlyObj} [result]   - The deserialized result object if an error did not occur.
+     *                      See {@link Models.ReadonlyObj} for more information.
+     *
+     *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
+     *
+     *                      {Response} [response] - The HTTP Response stream if an error did not occur.
+     */
+    getValid(): Promise<Models.ReadonlyObj>;
+    getValid(options: msRest.RequestOptionsBase): Promise<Models.ReadonlyObj>;
+    getValid(callback: msRest.ServiceCallback<Models.ReadonlyObj>): void;
+    getValid(options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Models.ReadonlyObj>): void;
+    getValid(options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Models.ReadonlyObj>): any {
+      if (!callback && typeof options === 'function') {
+        callback = options;
+        options = undefined;
+      }
+      let cb = callback as msRest.ServiceCallback<Models.ReadonlyObj>;
+      if (!callback) {
+        return this.getValidWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
+          return Promise.resolve(operationRes.parsedBody as Models.ReadonlyObj);
+        }).catch((err: Error) => {
+          return Promise.reject(err);
+        });
+      } else {
+        msRest.promiseToCallback(this.getValidWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+          if (err) {
+            return cb(err);
+          }
+          let result = data.parsedBody as Models.ReadonlyObj;
+          return cb(err, result, data.request, data.response);
+        });
+      }
+    }
+
+    /**
+     * Put complex types that have readonly properties
+     *
+     * @param {ReadonlypropertyPutValidOptionalParams} [options] Optional
+     * Parameters.
+     *
+     * @param {ServiceCallback} callback - The callback.
+     *
+     * @returns {ServiceCallback} callback(err, result, request, response)
+     *
+     *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
+     *
+     *                      {void} [result]   - The deserialized result object if an error did not occur.
+     *
+     *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
+     *
+     *                      {Response} [response] - The HTTP Response stream if an error did not occur.
+     */
+    putValid(): Promise<void>;
+    putValid(options: Models.ReadonlypropertyPutValidOptionalParams): Promise<void>;
+    putValid(callback: msRest.ServiceCallback<void>): void;
+    putValid(options: Models.ReadonlypropertyPutValidOptionalParams, callback: msRest.ServiceCallback<void>): void;
+    putValid(options?: Models.ReadonlypropertyPutValidOptionalParams, callback?: msRest.ServiceCallback<void>): any {
+      if (!callback && typeof options === 'function') {
+        callback = options;
+        options = undefined;
+      }
+      let cb = callback as msRest.ServiceCallback<void>;
+      if (!callback) {
+        return this.putValidWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
+          return Promise.resolve(operationRes.parsedBody as void);
+        }).catch((err: Error) => {
+          return Promise.reject(err);
+        });
+      } else {
+        msRest.promiseToCallback(this.putValidWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+          if (err) {
+            return cb(err);
+          }
+          let result = data.parsedBody as void;
+          return cb(err, result, data.request, data.response);
+        });
+      }
+    }
 }

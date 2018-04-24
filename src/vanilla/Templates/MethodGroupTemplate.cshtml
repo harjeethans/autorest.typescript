@@ -1,5 +1,7 @@
-﻿@using AutoRest.TypeScript.Model
+﻿@using AutoRest.TypeScript
+@using AutoRest.TypeScript.Model
 @using AutoRest.TypeScript.vanilla.Templates
+@using System.Linq
 @inherits AutoRest.Core.Template<AutoRest.TypeScript.Model.MethodGroupTS>
 /*
 @Header(" * ")
@@ -11,6 +13,10 @@ import * as msRest from "ms-rest-js";
 @:import * as Models from "../models";
 }
 import * as Mappers from "../models/mappers";
+@if (Model.MethodTemplateModels.Any())
+{
+@:import * as TypeSpecs from "../models/typeSpecs";
+}
 import { @(Model.CodeModel.Name) } from "../@(Model.CodeModel.Name.Substring(0, 1).ToLower() + Model.CodeModel.Name.Substring(1))";
 @if (Model.ContainsTimeSpan)
 {
@@ -18,6 +24,16 @@ import { @(Model.CodeModel.Name) } from "../@(Model.CodeModel.Name.Substring(0, 
 }
 @EmptyLine
 const WebResource = msRest.WebResource;
+@if (Model.MethodTemplateModels.Any())
+{
+@:const OperationSpec = msRest.OperationSpec;
+@:const HttpMethod = msRest.HttpMethod;
+    @foreach (MethodTS method in Model.MethodTemplateModels)
+    {
+        @EmptyLine
+        @(OperationSpecGenerator.GenerateOperationSpecs(method))
+    }
+}
 @EmptyLine
 /** Class representing a @(Model.TypeName). */
 export class @(Model.TypeName) {
@@ -31,12 +47,12 @@ export class @(Model.TypeName) {
   }
 @foreach (MethodTS method in Model.MethodTemplateModels)
 {
-  @EmptyLine
-  @:@(Include(new MethodTemplate(), method))
+    @EmptyLine
+    @:@(Include(new MethodTemplate(), method))
 }
 @foreach (MethodTS method in Model.MethodTemplateModels)
 {
-  @EmptyLine
-  @:@(Include(new MethodCallbackWrapperTemplate(), method))
+    @EmptyLine
+    @:@(Include(new MethodCallbackWrapperTemplate(), method))
 }
 }

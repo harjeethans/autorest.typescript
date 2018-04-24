@@ -161,6 +161,10 @@ namespace AutoRest.TypeScript
                             imports.Add("timeSpanSpec");
                             break;
 
+                        case KnownPrimaryType.UnixTime:
+                            imports.Add("unixTimeSpec");
+                            break;
+
                         case KnownPrimaryType.Uuid:
                             imports.Add("uuidSpec");
                             break;
@@ -330,6 +334,10 @@ namespace AutoRest.TypeScript
 
                     case KnownPrimaryType.TimeSpan:
                         tsValue.Text("timeSpanSpec");
+                        break;
+
+                    case KnownPrimaryType.UnixTime:
+                        tsValue.Text("unixTimeSpec");
                         break;
 
                     case KnownPrimaryType.Uuid:
