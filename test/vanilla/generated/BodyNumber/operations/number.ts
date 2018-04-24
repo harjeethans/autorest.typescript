@@ -3384,5 +3384,4 @@ export class Number {
       });
     }
   }
-
 }

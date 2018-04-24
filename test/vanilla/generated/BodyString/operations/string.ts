@@ -1853,5 +1853,4 @@ export class String {
       });
     }
   }
-
 }

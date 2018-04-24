@@ -4337,5 +4337,4 @@ export class Queries {
       });
     }
   }
-
 }

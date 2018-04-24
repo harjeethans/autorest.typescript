@@ -1,4 +1,4 @@
-﻿@using System.Linq;
+﻿@using AutoRest.TypeScript.Model
 @using AutoRest.TypeScript.vanilla.Templates
 @inherits AutoRest.Core.Template<AutoRest.TypeScript.Model.MethodGroupTS>
 /*
@@ -29,15 +29,14 @@ export class @(Model.TypeName) {
   constructor(client: @(Model.CodeModel.Name)) {
     this.client = client;
   }
-@EmptyLine
-@foreach (var method in Model.MethodTemplateModels)
+@foreach (MethodTS method in Model.MethodTemplateModels)
 {
+  @EmptyLine
   @:@(Include(new MethodTemplate(), method))
-  @EmptyLine
 }
-@foreach (var method in Model.MethodTemplateModels)
+@foreach (MethodTS method in Model.MethodTemplateModels)
 {
-  @:@(Include(new MethodCallbackWrapperTemplate(), method))
   @EmptyLine
+  @:@(Include(new MethodCallbackWrapperTemplate(), method))
 }
 }

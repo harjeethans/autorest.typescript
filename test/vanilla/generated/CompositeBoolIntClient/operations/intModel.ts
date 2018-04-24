@@ -1975,5 +1975,4 @@ export class IntModel {
       });
     }
   }
-
 }

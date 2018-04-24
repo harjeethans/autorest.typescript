@@ -3362,5 +3362,4 @@ export class HttpClientFailure {
       });
     }
   }
-
 }

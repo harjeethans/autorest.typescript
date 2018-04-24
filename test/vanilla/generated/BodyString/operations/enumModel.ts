@@ -899,5 +899,4 @@ export class EnumModel {
       });
     }
   }
-
 }

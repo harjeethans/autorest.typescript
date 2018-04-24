@@ -3935,5 +3935,4 @@ export class Header {
       });
     }
   }
-
 }

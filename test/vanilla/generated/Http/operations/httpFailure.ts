@@ -421,5 +421,4 @@ export class HttpFailure {
       });
     }
   }
-
 }

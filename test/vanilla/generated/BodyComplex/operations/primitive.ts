@@ -3020,5 +3020,4 @@ export class Primitive {
       });
     }
   }
-
 }

@@ -1983,5 +1983,4 @@ export class HttpRedirects {
       });
     }
   }
-
 }

@@ -858,5 +858,4 @@ export class Bool {
       });
     }
   }
-
 }

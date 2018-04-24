@@ -1117,5 +1117,4 @@ export class HttpRetry {
       });
     }
   }
-
 }

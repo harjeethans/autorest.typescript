@@ -987,5 +987,4 @@ export class Polymorphism {
       });
     }
   }
-
 }
