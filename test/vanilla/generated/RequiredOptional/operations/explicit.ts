@@ -40,7 +40,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredIntegerParameterWithHttpOperationResponse(bodyParameter: number, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredIntegerParameterWithHttpOperationResponse(bodyParameter: number, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -56,12 +56,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/integer/parameter';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -91,53 +88,43 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -152,7 +139,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalIntegerParameterWithHttpOperationResponse(options?: Models.ExplicitPostOptionalIntegerParameterOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalIntegerParameterWithHttpOperationResponse(options?: Models.ExplicitPostOptionalIntegerParameterOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let bodyParameter = (options && options.bodyParameter !== undefined) ? options.bodyParameter : undefined;
     // Validate
@@ -169,12 +156,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/integer/parameter';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -204,41 +188,31 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -256,7 +230,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredIntegerPropertyWithHttpOperationResponse(value: number, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredIntegerPropertyWithHttpOperationResponse(value: number, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -277,12 +251,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/integer/property';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -306,53 +277,43 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -368,7 +329,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalIntegerPropertyWithHttpOperationResponse(options?: Models.ExplicitPostOptionalIntegerPropertyOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalIntegerPropertyWithHttpOperationResponse(options?: Models.ExplicitPostOptionalIntegerPropertyOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let value = (options && options.value !== undefined) ? options.value : undefined;
     // Validate
@@ -390,12 +351,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/integer/property';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -419,41 +377,31 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -470,7 +418,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredIntegerHeaderWithHttpOperationResponse(headerParameter: number, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredIntegerHeaderWithHttpOperationResponse(headerParameter: number, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -486,14 +434,11 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/integer/header';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if (headerParameter !== undefined && headerParameter !== null) {
-      httpRequest.headers['headerParameter'] = headerParameter.toString();
+      httpRequest.headers.set("headerParameter", headerParameter.toString());
     }
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
@@ -503,53 +448,43 @@ export class Explicit {
       }
     }
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -565,7 +500,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalIntegerHeaderWithHttpOperationResponse(options?: Models.ExplicitPostOptionalIntegerHeaderOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalIntegerHeaderWithHttpOperationResponse(options?: Models.ExplicitPostOptionalIntegerHeaderOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let headerParameter = (options && options.headerParameter !== undefined) ? options.headerParameter : undefined;
     // Validate
@@ -582,14 +517,11 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/integer/header';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if (headerParameter !== undefined && headerParameter !== null) {
-      httpRequest.headers['headerParameter'] = headerParameter.toString();
+      httpRequest.headers.set("headerParameter", headerParameter.toString());
     }
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
@@ -599,41 +531,31 @@ export class Explicit {
       }
     }
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -650,7 +572,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredStringParameterWithHttpOperationResponse(bodyParameter: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredStringParameterWithHttpOperationResponse(bodyParameter: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -666,12 +588,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/string/parameter';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -701,53 +620,43 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -762,7 +671,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalStringParameterWithHttpOperationResponse(options?: Models.ExplicitPostOptionalStringParameterOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalStringParameterWithHttpOperationResponse(options?: Models.ExplicitPostOptionalStringParameterOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let bodyParameter = (options && options.bodyParameter !== undefined) ? options.bodyParameter : undefined;
     // Validate
@@ -779,12 +688,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/string/parameter';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -814,41 +720,31 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -866,7 +762,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredStringPropertyWithHttpOperationResponse(value: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredStringPropertyWithHttpOperationResponse(value: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -887,12 +783,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/string/property';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -916,53 +809,43 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -978,7 +861,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalStringPropertyWithHttpOperationResponse(options?: Models.ExplicitPostOptionalStringPropertyOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalStringPropertyWithHttpOperationResponse(options?: Models.ExplicitPostOptionalStringPropertyOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let value = (options && options.value !== undefined) ? options.value : undefined;
     // Validate
@@ -1000,12 +883,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/string/property';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -1029,41 +909,31 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1080,7 +950,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredStringHeaderWithHttpOperationResponse(headerParameter: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredStringHeaderWithHttpOperationResponse(headerParameter: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -1096,14 +966,11 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/string/header';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if (headerParameter !== undefined && headerParameter !== null) {
-      httpRequest.headers['headerParameter'] = headerParameter;
+      httpRequest.headers.set("headerParameter", headerParameter);
     }
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
@@ -1113,53 +980,43 @@ export class Explicit {
       }
     }
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1175,7 +1032,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalStringHeaderWithHttpOperationResponse(options?: Models.ExplicitPostOptionalStringHeaderOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalStringHeaderWithHttpOperationResponse(options?: Models.ExplicitPostOptionalStringHeaderOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let bodyParameter = (options && options.bodyParameter !== undefined) ? options.bodyParameter : undefined;
     // Validate
@@ -1192,14 +1049,11 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/string/header';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if (bodyParameter !== undefined && bodyParameter !== null) {
-      httpRequest.headers['bodyParameter'] = bodyParameter;
+      httpRequest.headers.set("bodyParameter", bodyParameter);
     }
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
@@ -1209,41 +1063,31 @@ export class Explicit {
       }
     }
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1260,7 +1104,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredClassParameterWithHttpOperationResponse(bodyParameter: Models.Product, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredClassParameterWithHttpOperationResponse(bodyParameter: Models.Product, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -1276,12 +1120,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/class/parameter';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -1305,53 +1146,43 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1366,7 +1197,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalClassParameterWithHttpOperationResponse(options?: Models.ExplicitPostOptionalClassParameterOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalClassParameterWithHttpOperationResponse(options?: Models.ExplicitPostOptionalClassParameterOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let bodyParameter = (options && options.bodyParameter !== undefined) ? options.bodyParameter : undefined;
 
@@ -1375,12 +1206,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/class/parameter';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -1404,41 +1232,31 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1456,7 +1274,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredClassPropertyWithHttpOperationResponse(value: Models.Product, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredClassPropertyWithHttpOperationResponse(value: Models.Product, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -1477,12 +1295,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/class/property';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -1506,53 +1321,43 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1568,7 +1373,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalClassPropertyWithHttpOperationResponse(options?: Models.ExplicitPostOptionalClassPropertyOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalClassPropertyWithHttpOperationResponse(options?: Models.ExplicitPostOptionalClassPropertyOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let value = (options && options.value !== undefined) ? options.value : undefined;
   let bodyParameter: any
@@ -1582,12 +1387,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/class/property';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -1611,41 +1413,31 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1662,7 +1454,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredArrayParameterWithHttpOperationResponse(bodyParameter: string[], options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredArrayParameterWithHttpOperationResponse(bodyParameter: string[], options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -1683,12 +1475,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/array/parameter';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -1725,53 +1514,43 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1786,7 +1565,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalArrayParameterWithHttpOperationResponse(options?: Models.ExplicitPostOptionalArrayParameterOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalArrayParameterWithHttpOperationResponse(options?: Models.ExplicitPostOptionalArrayParameterOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let bodyParameter = (options && options.bodyParameter !== undefined) ? options.bodyParameter : undefined;
     // Validate
@@ -1807,12 +1586,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/array/parameter';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -1849,41 +1625,31 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -1901,7 +1667,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredArrayPropertyWithHttpOperationResponse(value: string[], options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredArrayPropertyWithHttpOperationResponse(value: string[], options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -1927,12 +1693,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/array/property';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -1956,53 +1719,43 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -2018,7 +1771,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalArrayPropertyWithHttpOperationResponse(options?: Models.ExplicitPostOptionalArrayPropertyOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalArrayPropertyWithHttpOperationResponse(options?: Models.ExplicitPostOptionalArrayPropertyOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let value = (options && options.value !== undefined) ? options.value : undefined;
     // Validate
@@ -2044,12 +1797,9 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/array/property';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -2073,41 +1823,31 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -2124,7 +1864,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postRequiredArrayHeaderWithHttpOperationResponse(headerParameter: string[], options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async postRequiredArrayHeaderWithHttpOperationResponse(headerParameter: string[], options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -2145,14 +1885,11 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/requied/array/header';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if (headerParameter !== undefined && headerParameter !== null) {
-      httpRequest.headers['headerParameter'] = headerParameter.toString();
+      httpRequest.headers.set("headerParameter", headerParameter.toString());
     }
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
@@ -2162,53 +1899,43 @@ export class Explicit {
       }
     }
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode < 200 || statusCode >= 300) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
-        }
-        return Promise.reject(error);
-      }
-      let parsedResponse = operationRes.parsedBody as { [key: string]: any };
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode < 200 || statusCode >= 300) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
-        if (parsedResponse !== null && parsedResponse !== undefined) {
-          let resultMapper = Mappers.ErrorModel;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, parsedResponse, 'operationRes.parsedBody');
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-      } catch (error) {
-        let deserializationError = new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${operationRes.bodyAsText}`);
-        deserializationError.request = msRest.stripRequest(httpRequest);
-        deserializationError.response = msRest.stripResponse(response);
-        return Promise.reject(deserializationError);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.ErrorModel;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
+      }
+    } catch (error) {
+      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
+      throw new msRest.RestError(errorMessage, {
+        request: httpRequest,
+        response: httpResponse
+      });
+    }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -2224,7 +1951,7 @@ export class Explicit {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postOptionalArrayHeaderWithHttpOperationResponse(options?: Models.ExplicitPostOptionalArrayHeaderOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postOptionalArrayHeaderWithHttpOperationResponse(options?: Models.ExplicitPostOptionalArrayHeaderOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     let headerParameter = (options && options.headerParameter !== undefined) ? options.headerParameter : undefined;
     // Validate
@@ -2245,14 +1972,11 @@ export class Explicit {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'reqopt/optional/array/header';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if (headerParameter !== undefined && headerParameter !== null) {
-      httpRequest.headers['headerParameter'] = headerParameter.toString();
+      httpRequest.headers.set("headerParameter", headerParameter.toString());
     }
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
@@ -2262,41 +1986,31 @@ export class Explicit {
       }
     }
     // Send Request
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(operationRes.bodyAsText as string);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    let httpResponse: msRest.HttpResponse;
+    httpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    if (statusCode !== 200) {
+      let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(err) {
-      return Promise.reject(err);
+      throw new msRest.RestError(errorMessage, {
+        code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: deserializedBody
+      });
     }
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -2329,20 +2043,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredIntegerParameterWithHttpOperationResponse(bodyParameter, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredIntegerParameterWithHttpOperationResponse(bodyParameter, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredIntegerParameterWithHttpOperationResponse(bodyParameter, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredIntegerParameterWithHttpOperationResponse(bodyParameter, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2374,20 +2090,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalIntegerParameterWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalIntegerParameterWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalIntegerParameterWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalIntegerParameterWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2423,20 +2141,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredIntegerPropertyWithHttpOperationResponse(value, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredIntegerPropertyWithHttpOperationResponse(value, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredIntegerPropertyWithHttpOperationResponse(value, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredIntegerPropertyWithHttpOperationResponse(value, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2469,20 +2189,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalIntegerPropertyWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalIntegerPropertyWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalIntegerPropertyWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalIntegerPropertyWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2517,20 +2239,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredIntegerHeaderWithHttpOperationResponse(headerParameter, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredIntegerHeaderWithHttpOperationResponse(headerParameter, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredIntegerHeaderWithHttpOperationResponse(headerParameter, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredIntegerHeaderWithHttpOperationResponse(headerParameter, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2563,20 +2287,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalIntegerHeaderWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalIntegerHeaderWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalIntegerHeaderWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalIntegerHeaderWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2611,20 +2337,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredStringParameterWithHttpOperationResponse(bodyParameter, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredStringParameterWithHttpOperationResponse(bodyParameter, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredStringParameterWithHttpOperationResponse(bodyParameter, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredStringParameterWithHttpOperationResponse(bodyParameter, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2656,20 +2384,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalStringParameterWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalStringParameterWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalStringParameterWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalStringParameterWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2705,20 +2435,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredStringPropertyWithHttpOperationResponse(value, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredStringPropertyWithHttpOperationResponse(value, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredStringPropertyWithHttpOperationResponse(value, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredStringPropertyWithHttpOperationResponse(value, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2751,20 +2483,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalStringPropertyWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalStringPropertyWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalStringPropertyWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalStringPropertyWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2799,20 +2533,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredStringHeaderWithHttpOperationResponse(headerParameter, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredStringHeaderWithHttpOperationResponse(headerParameter, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredStringHeaderWithHttpOperationResponse(headerParameter, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredStringHeaderWithHttpOperationResponse(headerParameter, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2845,20 +2581,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalStringHeaderWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalStringHeaderWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalStringHeaderWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalStringHeaderWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2893,20 +2631,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredClassParameterWithHttpOperationResponse(bodyParameter, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredClassParameterWithHttpOperationResponse(bodyParameter, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredClassParameterWithHttpOperationResponse(bodyParameter, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredClassParameterWithHttpOperationResponse(bodyParameter, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2938,20 +2678,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalClassParameterWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalClassParameterWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalClassParameterWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalClassParameterWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -2987,20 +2729,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredClassPropertyWithHttpOperationResponse(value, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredClassPropertyWithHttpOperationResponse(value, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredClassPropertyWithHttpOperationResponse(value, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredClassPropertyWithHttpOperationResponse(value, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -3033,20 +2777,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalClassPropertyWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalClassPropertyWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalClassPropertyWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalClassPropertyWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -3081,20 +2827,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredArrayParameterWithHttpOperationResponse(bodyParameter, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredArrayParameterWithHttpOperationResponse(bodyParameter, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredArrayParameterWithHttpOperationResponse(bodyParameter, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredArrayParameterWithHttpOperationResponse(bodyParameter, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -3126,20 +2874,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalArrayParameterWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalArrayParameterWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalArrayParameterWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalArrayParameterWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -3175,20 +2925,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredArrayPropertyWithHttpOperationResponse(value, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredArrayPropertyWithHttpOperationResponse(value, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredArrayPropertyWithHttpOperationResponse(value, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredArrayPropertyWithHttpOperationResponse(value, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -3221,20 +2973,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalArrayPropertyWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalArrayPropertyWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalArrayPropertyWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalArrayPropertyWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -3269,20 +3023,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
+    const cb = callback as msRest.ServiceCallback<Models.ErrorModel>;
     if (!callback) {
-      return this.postRequiredArrayHeaderWithHttpOperationResponse(headerParameter, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as Models.ErrorModel);
+      return this.postRequiredArrayHeaderWithHttpOperationResponse(headerParameter, options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postRequiredArrayHeaderWithHttpOperationResponse(headerParameter, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postRequiredArrayHeaderWithHttpOperationResponse(headerParameter, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as Models.ErrorModel;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -3315,20 +3071,22 @@ export class Explicit {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<void>;
+    const cb = callback as msRest.ServiceCallback<void>;
     if (!callback) {
-      return this.postOptionalArrayHeaderWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.parsedBody as void);
+      return this.postOptionalArrayHeaderWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return httpResponse.deserializedBody();
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.postOptionalArrayHeaderWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.postOptionalArrayHeaderWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          httpResponse.deserializedBody().then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.parsedBody as void;
-        return cb(err, result, data.request, data.response);
       });
     }
   }

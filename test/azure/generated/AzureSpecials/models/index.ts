@@ -8,7 +8,7 @@
  * regenerated.
  */
 
-import { BaseResource, CloudError } from "ms-rest-azure-js";
+import { BaseResource, CloudError, AzureServiceClientOptions } from "ms-rest-azure-js";
 import { RequestOptionsBase } from "ms-rest-js";
 
 export { BaseResource, CloudError };
@@ -107,5 +107,30 @@ export interface OdataGetWithFilterOptionalParams extends RequestOptionsBase {
    * @member {string} [orderby] The orderby parameter with value id.
    */
   orderby?: string;
+}
+
+/**
+ * @interface
+ * An interface representing AutoRestAzureSpecialParametersTestClientOptions.
+ * @extends AzureServiceClientOptions
+ */
+export interface AutoRestAzureSpecialParametersTestClientOptions extends AzureServiceClientOptions {
+  /**
+   * @member {string} [acceptLanguage] Gets or sets the preferred language for
+   * the response. Default value: 'en-US' .
+   */
+  acceptLanguage?: string;
+  /**
+   * @member {number} [longRunningOperationRetryTimeout] Gets or sets the retry
+   * timeout in seconds for Long Running Operations. Default value is 30.
+   * Default value: 30 .
+   */
+  longRunningOperationRetryTimeout?: number;
+  /**
+   * @member {boolean} [generateClientRequestId] When set to true a unique
+   * x-ms-client-request-id value is generated and included in each request.
+   * Default is true. Default value: true .
+   */
+  generateClientRequestId?: boolean;
 }
 

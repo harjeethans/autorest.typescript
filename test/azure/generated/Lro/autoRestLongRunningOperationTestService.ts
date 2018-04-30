@@ -14,8 +14,6 @@ import * as msRest from "ms-rest-js";
 import * as msRestAzure from "ms-rest-azure-js";
 import * as operations from "./operations";
 
-const packageName = "";
-const packageVersion = "";
 
 class AutoRestLongRunningOperationTestService extends msRestAzure.AzureServiceClient {
 
@@ -60,14 +58,21 @@ class AutoRestLongRunningOperationTestService extends msRestAzure.AzureServiceCl
    * @param {boolean} [options.generateClientRequestId] - When set to true a unique x-ms-client-request-id value is generated and included in each request. Default is true.
    *
    */
-  constructor(credentials: msRest.ServiceClientCredentials, baseUri?: string, options?: msRestAzure.AzureServiceClientOptions) {
+  constructor(credentials: msRest.ServiceClientCredentials, subscriptionId: string, baseUri?: string, options?: Models.AutoRestLongRunningOperationTestServiceOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
 
     if (!options) options = {};
 
-    super(credentials, options);
+    super(credentials, subscriptionId, {
+      acceptLanguage: options.acceptLanguage,
+      generateClientRequestId: options.generateClientRequestId,
+      longRunningOperationRetryTimeoutInSeconds: options.longRunningOperationRetryTimeoutInSeconds,
+      rpRegistrationRetryTimeoutInSeconds: options.rpRegistrationRetryTimeoutInSeconds,
+      noRetryPolicy: options.noRetryPolicy,
+      nodeJsUserAgentPackage: options.nodeJsUserAgentPackage || "/$"
+    });
 
     this.acceptLanguage = 'en-US';
     this.longRunningOperationRetryTimeout = 30;
@@ -78,7 +83,6 @@ class AutoRestLongRunningOperationTestService extends msRestAzure.AzureServiceCl
     }
     this.credentials = credentials;
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     if(options.acceptLanguage !== null && options.acceptLanguage !== undefined) {
       this.acceptLanguage = options.acceptLanguage;
     }

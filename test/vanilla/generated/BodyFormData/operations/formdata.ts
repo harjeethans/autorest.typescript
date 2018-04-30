@@ -41,7 +41,7 @@ export class Formdata {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async uploadFileWithHttpOperationResponse(fileContent: ReadableStream, fileName: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async uploadFileWithHttpOperationResponse(fileContent: ReadableStream, fileName: string, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -60,12 +60,9 @@ export class Formdata {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'formdata/stream/uploadfile';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'POST';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "POST", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'multipart/form-data';
+    httpRequest.headers.set("Content-Type", "multipart/form-data");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -104,7 +101,7 @@ export class Formdata {
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
           if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
+            const resultMapper = Mappers.ErrorModel;
             error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
           }
         } catch (defaultError) {
@@ -136,7 +133,7 @@ export class Formdata {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async uploadFileViaBodyWithHttpOperationResponse(fileContent: ReadableStream, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async uploadFileViaBodyWithHttpOperationResponse(fileContent: ReadableStream, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Validate
     try {
@@ -152,12 +149,9 @@ export class Formdata {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'formdata/stream/uploadfile';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'PUT';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "PUT", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/octet-stream';
+    httpRequest.headers.set("Content-Type", "application/octet-stream");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -190,7 +184,7 @@ export class Formdata {
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
           if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
+            const resultMapper = Mappers.ErrorModel;
             error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
           }
         } catch (defaultError) {
@@ -240,20 +234,22 @@ export class Formdata {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<Response>;
     if (!callback) {
-      return this.uploadFileWithHttpOperationResponse(fileContent, fileName, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.response);
+      return this.uploadFileWithHttpOperationResponse(fileContent, fileName, options).then((httpResponse: msRest.HttpResponse) => {
+        return Promise.resolve(httpResponse.readableStreamBody);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.uploadFileWithHttpOperationResponse(fileContent, fileName, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.uploadFileWithHttpOperationResponse(fileContent, fileName, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          Promise.resolve(httpResponse.readableStreamBody).then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.response;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -286,20 +282,22 @@ export class Formdata {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<Response>;
     if (!callback) {
-      return this.uploadFileViaBodyWithHttpOperationResponse(fileContent, options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.response);
+      return this.uploadFileViaBodyWithHttpOperationResponse(fileContent, options).then((httpResponse: msRest.HttpResponse) => {
+        return Promise.resolve(httpResponse.readableStreamBody);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.uploadFileViaBodyWithHttpOperationResponse(fileContent, options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.uploadFileViaBodyWithHttpOperationResponse(fileContent, options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          Promise.resolve(httpResponse.readableStreamBody).then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.response;
-        return cb(err, result, data.request, data.response);
       });
     }
   }

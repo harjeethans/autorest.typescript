@@ -2,55 +2,48 @@
 @using AutoRest.TypeScript.Model
 @inherits AutoRest.Core.Template<AutoRest.TypeScript.Model.MethodTS>
 // Send Request
-let operationRes: msRest.HttpOperationResponse;
-try {
-  operationRes = await client.pipeline(httpRequest);
-  let response = operationRes.response;
-  let statusCode = response.status;
-  if (@(Model.FailureStatusCodePredicate)) {
-    let error = new msRest.RestError(operationRes.bodyAsText as string);
-    error.statusCode = response.status;
-    error.request = msRest.stripRequest(httpRequest);
-    error.response = msRest.stripResponse(response);
-    let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-    try {
-      if (parsedErrorResponse) {
-        @(Model.PopulateErrorCodeAndMessage())
-      }
-  @if (Model.DefaultResponse.Body != null)
-  {
-      var deserializeErrorBody = Model.GetDeserializationString(Model.DefaultResponse.Body, "error.body", "parsedErrorResponse");
-      if (!string.IsNullOrWhiteSpace(deserializeErrorBody))
-      {
-@:      if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-@:        @(deserializeErrorBody)
-@:      }
-      }
-  }
-    } catch (defaultError) {
-      error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                       `- "${operationRes.bodyAsText}" for the default response.`;
-      return Promise.reject(error);
+let httpResponse: msRest.HttpResponse;
+httpResponse = await client.sendRequest(httpRequest);
+const statusCode: number = httpResponse.statusCode;
+let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+if (@(Model.FailureStatusCodePredicate)) {
+  let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
+  try {
+@if (Model.DefaultResponse.Body != null)
+{
+    var deserializeErrorBody = Model.GetDeserializationString(Model.DefaultResponse.Body, "deserializedBody", "deserializedBody");
+    if (!string.IsNullOrWhiteSpace(deserializeErrorBody))
+    {
+@:    if (deserializedBody != undefined) {
+@:      @(deserializeErrorBody)
+@:    }
     }
-    return Promise.reject(error);
-  }
-  @Model.InitializeResult
-  @foreach (var responsePair in Model.Responses.Where(r => r.Value.Body != null))
-  {
-      <text>
-  // Deserialize Response
-  if (statusCode === @MethodTS.GetStatusCodeReference(responsePair.Key)) {
-    @(Model.DeserializeResponse(responsePair.Value.Body, "operationRes.parsedBody"))
-  }
-      </text>
-  }
-  @if (Model.ReturnType.Body != null && Model.DefaultResponse.Body != null && !Model.Responses.Any())
-  {
-    @(Model.DeserializeResponse(Model.DefaultResponse.Body, "operationRes.parsedBody"))
-  }
-@EmptyLine
-} catch(err) {
-  return Promise.reject(err);
 }
+  } catch (deserializationError) {
+    errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
+  }
+  throw new msRest.RestError(errorMessage, {
+    code: deserializedBody.error && deserializedBody.error.code || deserializedBody.code,
+    statusCode: httpResponse.statusCode,
+    request: httpRequest,
+    response: httpResponse,
+    body: deserializedBody
+  });
+}
+@Model.InitializeResult
+@foreach (var responsePair in Model.Responses.Where(r => r.Value.Body != null))
+{
+    <text>
+// Deserialize Response
+if (statusCode === @MethodTS.GetStatusCodeReference(responsePair.Key)) {
+  @(Model.DeserializeResponse(responsePair.Value.Body, "deserializedBody"))
+}
+    </text>
+}
+@if (Model.ReturnType.Body != null && Model.DefaultResponse.Body != null && !Model.Responses.Any())
+{
+  @(Model.DeserializeResponse(Model.DefaultResponse.Body, "deserializedBody"))
+}
+httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
 @EmptyLine
-return Promise.resolve(operationRes);
+return httpResponse;

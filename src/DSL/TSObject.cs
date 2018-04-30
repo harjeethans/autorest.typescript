@@ -4,7 +4,7 @@
 
 using System;
 
-namespace AutoRest.TypeScript
+namespace AutoRest.TypeScript.DSL
 {
     /// <summary>
     /// A TypeScript DSL representation for a JSON object.
@@ -14,7 +14,7 @@ namespace AutoRest.TypeScript
         private readonly TSBuilder builder;
         private State currentState = State.Start;
 
-        public enum State
+        private enum State
         {
             Start,
             BlockComment,
@@ -93,11 +93,20 @@ namespace AutoRest.TypeScript
         }
 
         /// <summary>
+        /// Add a property to this TSObject with the provided name and null value.
+        /// </summary>
+        /// <param name="propertyName">The name of the new property.</param>
+        public void NullProperty(string propertyName)
+        {
+            Property(propertyName, (TSValue tsValue) => tsValue.Null());
+        }
+
+        /// <summary>
         /// Add a property to this TSObject with the provided name and boolean value.
         /// </summary>
         /// <param name="propertyName">The name of the new property.</param>
         /// <param name="propertyValue">The boolean value of the new property.</param>
-        public void Property(string propertyName, bool propertyValue)
+        public void BooleanProperty(string propertyName, bool propertyValue)
         {
             Property(propertyName, (TSValue tsValue) => tsValue.Boolean(propertyValue));
         }
@@ -107,9 +116,19 @@ namespace AutoRest.TypeScript
         /// </summary>
         /// <param name="propertyName">The name of the new property.</param>
         /// <param name="propertyValue">The text value of the new property. This value will not be quoted.</param>
-        public void Property(string propertyName, string propertyValue)
+        public void TextProperty(string propertyName, string propertyValue)
         {
             Property(propertyName, (TSValue tsValue) => tsValue.Text(propertyValue));
+        }
+
+        /// <summary>
+        /// Add a property to this TSObject with the provided name and text value. The text value will be quoted.
+        /// </summary>
+        /// <param name="propertyName">The name of the new property.</param>
+        /// <param name="propertyValue">The text value of the new property. This value will be quoted.</param>
+        public void QuotedStringProperty(string propertyName, string propertyValue)
+        {
+            Property(propertyName, (TSValue tsValue) => tsValue.QuotedString(propertyValue));
         }
 
         /// <summary>
@@ -117,7 +136,7 @@ namespace AutoRest.TypeScript
         /// </summary>
         /// <param name="propertyName">The name of the new property.</param>
         /// <param name="propertyValueAction">The action to invoke to add the property's array value.</param>
-        public void Property(string propertyName, Action<TSArray> propertyValueAction)
+        public void ArrayProperty(string propertyName, Action<TSArray> propertyValueAction)
         {
             Property(propertyName, (TSValue tsValue) => tsValue.Array(propertyValueAction));
         }
@@ -127,7 +146,7 @@ namespace AutoRest.TypeScript
         /// </summary>
         /// <param name="propertyName">The name of the new property.</param>
         /// <param name="propertyValueAction">The action to invoke to add the property's object value.</param>
-        public void Property(string propertyName, Action<TSObject> propertyValueAction)
+        public void ObjectProperty(string propertyName, Action<TSObject> propertyValueAction)
         {
             Property(propertyName, (TSValue tsValue) => tsValue.Object(propertyValueAction));
         }

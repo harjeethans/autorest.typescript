@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using AutoRest.Core.Model;
 using AutoRest.Core.Utilities;
+using AutoRest.TypeScript.DSL;
 using Newtonsoft.Json;
 
 namespace AutoRest.TypeScript.Model
@@ -306,13 +307,21 @@ namespace AutoRest.TypeScript.Model
         {
             get
             {
-                var builder = new IndentedStringBuilder("  ");
-                var errorVariable = this.GetUniqueName("deserializationError");
-                return builder.AppendLine("let {0} = new msRest.RestError(`Error ${{error}} occurred in " +
-                    "deserializing the responseBody - ${{operationRes.bodyAsText}}`);", errorVariable)
-                    .AppendLine("{0}.request = msRest.stripRequest(httpRequest);", errorVariable)
-                    .AppendLine("{0}.response = msRest.stripResponse(response);", errorVariable)
-                    .AppendLine("return Promise.reject({0});", errorVariable).ToString();
+                TSBuilder builder = new TSBuilder();
+                TSBlock block = new TSBlock(builder);
+
+                block.Line("const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;");
+                block.ThrowNew(value => value.FunctionCall("msRest.RestError", argumentList =>
+                {
+                    argumentList.Text("errorMessage");
+                    argumentList.Object(optionalArguments =>
+                    {
+                        optionalArguments.TextProperty("request", "httpRequest");
+                        optionalArguments.TextProperty("response", "httpResponse");
+                    });
+                }));
+
+                return builder.ToString();
             }
         }
 
@@ -386,11 +395,11 @@ namespace AutoRest.TypeScript.Model
             var builder = new IndentedStringBuilder("  ");
             if (type is CompositeType)
             {
-                builder.AppendLine("let resultMapper = Mappers.{0};", type.Name);
+                builder.AppendLine("const resultMapper = Mappers.{0};", type.Name);
             }
             else
             {
-                builder.AppendLine("let resultMapper = {{{0}}};", type.ConstructMapper(responseVariable, null, isPageable: false, expandComposite: false, isXML: CodeModel?.ShouldGenerateXmlSerialization == true));
+                builder.AppendLine("const resultMapper = {{{0}}};", type.ConstructMapper(responseVariable, null, isPageable: false, expandComposite: false, isXML: CodeModel?.ShouldGenerateXmlSerialization == true));
             }
 
             if (CodeModel.ShouldGenerateXmlSerialization && type is SequenceType st)
@@ -438,7 +447,7 @@ namespace AutoRest.TypeScript.Model
             }
         }
 
-        public string DeserializeResponse(IModelType type, string valueReference = "result", string responseVariable = "parsedResponse")
+        public string DeserializeResponse(IModelType type, string valueReference = "result", string responseVariable = "deserializedBody")
         {
             if (type == null)
             {
@@ -446,13 +455,12 @@ namespace AutoRest.TypeScript.Model
             }
 
             var builder = new IndentedStringBuilder("  ");
-            builder.AppendLine("let {0} = {1} as {{ [key: string]: any }};", responseVariable, valueReference)
-                   .AppendLine("try {")
+            builder.AppendLine("try {")
                    .Indent();
             var deserializeBody = GetDeserializationString(type, valueReference, responseVariable);
             if (!string.IsNullOrWhiteSpace(deserializeBody))
             {
-                builder.AppendLine("if ({0} !== null && {0} !== undefined) {{", responseVariable)
+                builder.AppendLine($"if ({responseVariable} != undefined) {{")
                          .Indent()
                          .AppendLine(deserializeBody)
                        .Outdent()
@@ -603,17 +611,6 @@ namespace AutoRest.TypeScript.Model
 
                 builder.AppendLine(pathReplaceFormat, variableName, pathParameter.SerializedName,
                     pathParameter.ModelType.ToString(pathParameter.Name));
-            }
-        }
-
-        /// <summary>
-        /// Gets the expression for default header setting.
-        /// </summary>
-        public virtual string SetDefaultHeaders
-        {
-            get
-            {
-                return string.Empty;
             }
         }
 
@@ -939,11 +936,11 @@ namespace AutoRest.TypeScript.Model
 
             if (ReturnType.Body.IsPrimaryType(KnownPrimaryType.Stream))
             {
-                sb.AppendFormat("{0}.response", resultReference);
+                sb.AppendFormat("Promise.resolve({0}.readableStreamBody)", resultReference);
             }
             else
             {
-                sb.AppendFormat("{0}.parsedBody as {1}", resultReference, ReturnTypeTSString);
+                sb.AppendFormat("{0}.deserializedBody()", resultReference);
             }
             return sb.ToString();
         }

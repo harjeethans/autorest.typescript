@@ -4,7 +4,7 @@
 
 using System;
 
-namespace AutoRest.TypeScript
+namespace AutoRest.TypeScript.DSL
 {
     /// <summary>
     /// A TypeScript DSL representation for a value. This could be a property value, an argument in
@@ -76,6 +76,22 @@ namespace AutoRest.TypeScript
         public virtual void Boolean(bool value)
         {
             builder.Boolean(value);
+        }
+
+        /// <summary>
+        /// Add a null value to this TSValue.
+        /// </summary>
+        public virtual void Null()
+        {
+            builder.Null();
+        }
+
+        /// <summary>
+        /// Add an undefined value to this TSValue.
+        /// </summary>
+        public virtual void Undefined()
+        {
+            builder.Undefined();
         }
     }
 }

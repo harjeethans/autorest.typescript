@@ -206,3 +206,37 @@ export const ParameterGroupingPostSharedParameterGroupObjectOptionalParams = {
     }
   }
 };
+
+export const AutoRestParameterGroupingTestServiceOptions = {
+  required: false,
+  type: {
+    name: 'Composite',
+    className: 'AutoRestParameterGroupingTestServiceOptions',
+    modelProperties: {
+      acceptLanguage: {
+        required: false,
+        serializedName: 'accept-language',
+        defaultValue: 'en-US',
+        type: {
+          name: 'String'
+        }
+      },
+      longRunningOperationRetryTimeout: {
+        required: false,
+        serializedName: 'longRunningOperationRetryTimeout',
+        defaultValue: 30,
+        type: {
+          name: 'Number'
+        }
+      },
+      generateClientRequestId: {
+        required: false,
+        serializedName: 'generateClientRequestId',
+        defaultValue: true,
+        type: {
+          name: 'Boolean'
+        }
+      }
+    }
+  }
+};

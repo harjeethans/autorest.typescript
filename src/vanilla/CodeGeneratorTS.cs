@@ -3,13 +3,14 @@
 // 
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoRest.Core;
 using AutoRest.Core.Model;
 using AutoRest.Core.Utilities;
+using AutoRest.TypeScript.DSL;
+using AutoRest.TypeScript.Generators;
 using AutoRest.TypeScript.Model;
 using AutoRest.TypeScript.vanilla.Templates;
 using static AutoRest.Core.Utilities.DependencyInjection;

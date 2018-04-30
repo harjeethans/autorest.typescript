@@ -36,7 +36,7 @@ export class Files {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async getFileWithHttpOperationResponse(options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async getFileWithHttpOperationResponse(options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
 
     // Construct URL
@@ -44,12 +44,9 @@ export class Files {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'files/stream/nonempty';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'GET';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "GET", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -79,7 +76,7 @@ export class Files {
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
           if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
+            const resultMapper = Mappers.ErrorModel;
             error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
           }
         } catch (defaultError) {
@@ -109,7 +106,7 @@ export class Files {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async getFileLargeWithHttpOperationResponse(options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async getFileLargeWithHttpOperationResponse(options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
 
     // Construct URL
@@ -117,12 +114,9 @@ export class Files {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'files/stream/verylarge';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'GET';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "GET", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -152,7 +146,7 @@ export class Files {
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
           if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
+            const resultMapper = Mappers.ErrorModel;
             error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
           }
         } catch (defaultError) {
@@ -182,7 +176,7 @@ export class Files {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async getEmptyFileWithHttpOperationResponse(options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async getEmptyFileWithHttpOperationResponse(options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
 
     // Construct URL
@@ -190,12 +184,9 @@ export class Files {
     let requestUrl = baseUrl + (baseUrl.endsWith('/') ? '' : '/') + 'files/stream/empty';
 
     // Create HTTP transport objects
-    let httpRequest = new WebResource();
-    httpRequest.method = 'GET';
-    httpRequest.url = requestUrl;
-    httpRequest.headers = {};
+    const httpRequest = new msRest.HttpRequest({ method: "GET", url: requestUrl });
     // Set Headers
-    httpRequest.headers['Content-Type'] = 'application/json; charset=utf-8';
+    httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
       for(let headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
@@ -225,7 +216,7 @@ export class Files {
             error.message = internalError ? internalError.message : parsedErrorResponse.message;
           }
           if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            let resultMapper = Mappers.ErrorModel;
+            const resultMapper = Mappers.ErrorModel;
             error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
           }
         } catch (defaultError) {
@@ -270,20 +261,22 @@ export class Files {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<Response>;
     if (!callback) {
-      return this.getFileWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.response);
+      return this.getFileWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return Promise.resolve(httpResponse.readableStreamBody);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.getFileWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.getFileWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          Promise.resolve(httpResponse.readableStreamBody).then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.response;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -314,20 +307,22 @@ export class Files {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<Response>;
     if (!callback) {
-      return this.getFileLargeWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.response);
+      return this.getFileLargeWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return Promise.resolve(httpResponse.readableStreamBody);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.getFileLargeWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.getFileLargeWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          Promise.resolve(httpResponse.readableStreamBody).then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.response;
-        return cb(err, result, data.request, data.response);
       });
     }
   }
@@ -358,20 +353,22 @@ export class Files {
       callback = options;
       options = undefined;
     }
-    let cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<Response>;
     if (!callback) {
-      return this.getEmptyFileWithHttpOperationResponse(options).then((operationRes: msRest.HttpOperationResponse) => {
-        return Promise.resolve(operationRes.response);
+      return this.getEmptyFileWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
+        return Promise.resolve(httpResponse.readableStreamBody);
       }).catch((err: Error) => {
         return Promise.reject(err);
       });
     } else {
-      msRest.promiseToCallback(this.getEmptyFileWithHttpOperationResponse(options))((err: Error, data: msRest.HttpOperationResponse) => {
+      msRest.promiseToCallback(this.getEmptyFileWithHttpOperationResponse(options))((err: Error, httpResponse: msRest.HttpResponse) => {
         if (err) {
-          return cb(err);
+          cb(err);
+        } else {
+          Promise.resolve(httpResponse.readableStreamBody).then((httpResponseBody: any) => {
+            cb(err, httpResponseBody, httpResponse.request, httpResponse);
+          });
         }
-        let result = data.response;
-        return cb(err, result, data.request, data.response);
       });
     }
   }

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AutoRest.TypeScript
+namespace AutoRest.TypeScript.DSL
 {
     /// <summary>
     /// A StringBuilder that has helper methods for building TypeScript code.
@@ -20,9 +20,7 @@ namespace AutoRest.TypeScript
         private readonly StringBuilder contents = new StringBuilder();
         private readonly StringBuilder linePrefix = new StringBuilder();
 
-        private int? wordWrapWidth;
-
-        private const int multiLineCommentWordWrapWidth = 100;
+        public const int multiLineCommentWordWrapWidth = 100;
 
         private State currentState;
 
@@ -31,6 +29,11 @@ namespace AutoRest.TypeScript
             EmptyLine,
             LineWithText,
         }
+
+        /// <summary>
+        /// The word wrap width. A null wordWrapWidth indicates that no word wrapping should take place.
+        /// </summary>
+        public int? WordWrapWidth { get; set; }
 
         /// <summary>
         /// Get the text that has been added to this TSBuilder.
@@ -68,30 +71,21 @@ namespace AutoRest.TypeScript
         }
 
         /// <summary>
-        /// Set the word wrap width. A null wordWrapWidth indicates that no word wrapping should take place.
-        /// </summary>
-        /// <param name="wordWrapWidth">The new word wrap width.</param>
-        public void SetWordWrapWidth(int? wordWrapWidth)
-        {
-            this.wordWrapWidth = wordWrapWidth;
-        }
-
-        /// <summary>
         /// Invoke the provided action with the provided word wrap width.
         /// </summary>
         /// <param name="wordWrapWidth">The word wrap width to apply to the provided action.</param>
         /// <param name="action">The action to invoke with the provided word wrap width.</param>
         private void WithWordWrap(int wordWrapWidth, Action action)
         {
-            int? previousWordWrapWidth = this.wordWrapWidth;
-            SetWordWrapWidth(wordWrapWidth);
+            int? previousWordWrapWidth = this.WordWrapWidth;
+            WordWrapWidth = wordWrapWidth;
             try
             {
                 action.Invoke();
             }
             finally
             {
-                SetWordWrapWidth(previousWordWrapWidth);
+                WordWrapWidth = previousWordWrapWidth;
             }
         }
 
@@ -152,7 +146,7 @@ namespace AutoRest.TypeScript
         {
             List<string> lines = new List<string>();
 
-            if (wordWrapWidth == null)
+            if (WordWrapWidth == null)
             {
                 lines.Add(line);
             }
@@ -160,7 +154,7 @@ namespace AutoRest.TypeScript
             {
                 // Subtract an extra column from the word wrap width because columns generally are
                 // 1 -based instead of 0-based.
-                int wordWrapIndexMinusLinePrefixLength = wordWrapWidth.Value - (addPrefix ? linePrefix.Length : 0) - 1;
+                int wordWrapIndexMinusLinePrefixLength = WordWrapWidth.Value - (addPrefix ? linePrefix.Length : 0) - 1;
                 IEnumerable<string> wrappedLines = line.WordWrap(wordWrapIndexMinusLinePrefixLength);
                 foreach (string wrappedLine in wrappedLines.SkipLast(1))
                 {
@@ -284,11 +278,31 @@ namespace AutoRest.TypeScript
             Comment("/*", lines);
         }
 
+        public void DocumentationComment(Action<TSDocumentationComment> commentAction)
+        {
+            if (commentAction != null)
+            {
+                using (TSDocumentationComment comment = new TSDocumentationComment(this))
+                {
+                    commentAction.Invoke(comment);
+                }
+            }
+        }
+
         /// <summary>
         /// Add a /** */ comment to this TSBuilder. If no non-null and non-empty lines are provided, then nothing will be added.
         /// </summary>
         /// <param name="lines">The lines to add. Null lines will be ignored.</param>
         public void DocumentationComment(params string[] lines)
+        {
+            Comment("/**", lines);
+        }
+
+        /// <summary>
+        /// Add a /** */ comment to this TSBuilder. If no non-null and non-empty lines are provided, then nothing will be added.
+        /// </summary>
+        /// <param name="lines">The lines to add. Null lines will be ignored.</param>
+        public void DocumentationComment(IEnumerable<string> lines)
         {
             Comment("/**", lines);
         }
@@ -346,6 +360,22 @@ namespace AutoRest.TypeScript
         }
 
         /// <summary>
+        /// Add a null value to this TSBuilder.
+        /// </summary>
+        public void Null()
+        {
+            Text("null");
+        }
+
+        /// <summary>
+        /// Add an undefined value to this TSBuilder.
+        /// </summary>
+        public void Undefined()
+        {
+            Text("undefined");
+        }
+
+        /// <summary>
         /// Add a function call with the provided functionName to this TSBuilder. The provided
         /// action will be used to create the arguments for the function call.
         /// </summary>
@@ -356,6 +386,54 @@ namespace AutoRest.TypeScript
             Text($"{functionName}(");
             argumentListAction.Invoke(new TSArgumentList(this));
             Text(")");
+        }
+
+        public void AsyncMethod(string methodName, string returnType, Action<TSParameterList> parameterListAction, Action<TSBlock> methodBodyAction)
+        {
+            Text($"async {methodName}(");
+            if (parameterListAction != null)
+            {
+                parameterListAction.Invoke(new TSParameterList(this));
+            }
+            Line($"): {returnType} {{");
+            Indent(() =>
+            {
+                methodBodyAction.Invoke(new TSBlock(this));
+            });
+            Line($"}}");
+        }
+
+        public TSIfBlock If(string condition, Action<TSBlock> bodyAction)
+        {
+            Line($"if ({condition}) {{");
+            Indent(() =>
+            {
+                using (TSBlock block = new TSBlock(this))
+                {
+                    bodyAction.Invoke(block);
+                }
+            });
+            Text($"}}");
+            return new TSIfBlock(this);
+        }
+
+        public void Return(Action<TSValue> returnValueAction)
+        {
+            Text("return ");
+            returnValueAction.Invoke(new TSValue(this));
+            Line(";");
+        }
+
+        public void Throw(string valueToThrow)
+        {
+            Line($"throw {valueToThrow};");
+        }
+
+        public void ThrowNew(Action<TSValue> valueAction)
+        {
+            Text($"throw new ");
+            valueAction.Invoke(new TSValue(this));
+            Line(";");
         }
     }
 }

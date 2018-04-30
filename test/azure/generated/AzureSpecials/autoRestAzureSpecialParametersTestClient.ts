@@ -14,8 +14,6 @@ import * as msRest from "ms-rest-js";
 import * as msRestAzure from "ms-rest-azure-js";
 import * as operations from "./operations";
 
-const packageName = "";
-const packageVersion = "";
 
 class AutoRestAzureSpecialParametersTestClient extends msRestAzure.AzureServiceClient {
 
@@ -70,7 +68,7 @@ class AutoRestAzureSpecialParametersTestClient extends msRestAzure.AzureServiceC
    * @param {boolean} [options.generateClientRequestId] - When set to true a unique x-ms-client-request-id value is generated and included in each request. Default is true.
    *
    */
-  constructor(credentials: msRest.ServiceClientCredentials, subscriptionId: string, baseUri?: string, options?: msRestAzure.AzureServiceClientOptions) {
+  constructor(credentials: msRest.ServiceClientCredentials, subscriptionId: string, baseUri?: string, options?: Models.AutoRestAzureSpecialParametersTestClientOptions) {
     if (credentials === null || credentials === undefined) {
       throw new Error('\'credentials\' cannot be null.');
     }
@@ -80,7 +78,14 @@ class AutoRestAzureSpecialParametersTestClient extends msRestAzure.AzureServiceC
 
     if (!options) options = {};
 
-    super(credentials, options);
+    super(credentials, subscriptionId, {
+      acceptLanguage: options.acceptLanguage,
+      generateClientRequestId: options.generateClientRequestId,
+      longRunningOperationRetryTimeoutInSeconds: options.longRunningOperationRetryTimeoutInSeconds,
+      rpRegistrationRetryTimeoutInSeconds: options.rpRegistrationRetryTimeoutInSeconds,
+      noRetryPolicy: options.noRetryPolicy,
+      nodeJsUserAgentPackage: options.nodeJsUserAgentPackage || "/$"
+    });
 
     this.apiVersion = '2015-07-01-preview';
     this.acceptLanguage = 'en-US';
@@ -93,7 +98,6 @@ class AutoRestAzureSpecialParametersTestClient extends msRestAzure.AzureServiceC
     this.credentials = credentials;
     this.subscriptionId = subscriptionId;
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     if(options.acceptLanguage !== null && options.acceptLanguage !== undefined) {
       this.acceptLanguage = options.acceptLanguage;
     }

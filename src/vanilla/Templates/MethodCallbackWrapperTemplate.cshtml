@@ -1,11 +1,5 @@
-@using System
-@using System.Globalization
-@using System.Linq;
-@using AutoRest.Core.Model
 @using AutoRest.Core.Utilities
-@using AutoRest.TypeScript
 @using AutoRest.TypeScript.Model
-@using AutoRest.TypeScript.vanilla.Templates
 @inherits AutoRest.Core.Template<MethodTS>
 
 @(Model.GenerateMethodDocumentation(MethodTS.MethodFlavor.Callback))
@@ -18,20 +12,22 @@
     callback = options;
     options = undefined;
   }
-  let cb = callback as msRest.ServiceCallback<@(Model.ReturnTypeTSString)>;
+  const cb = callback as msRest.ServiceCallback<@(Model.ReturnTypeTSString)>;
   if (!callback) {
-    return this.@(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclaration)).then((operationRes: msRest.HttpOperationResponse) => {
-      return Promise.resolve(@(Model.BuildResultInitialization("operationRes")));
+    return this.@(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclaration)).then((httpResponse: msRest.HttpResponse) => {
+      return @(Model.BuildResultInitialization("httpResponse"));
     }).catch((err: Error) => {
       return Promise.reject(err);
     });
   } else {
-    msRest.promiseToCallback(this.@(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclaration)))((err: Error, data: msRest.HttpOperationResponse) => {
+    msRest.promiseToCallback(this.@(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclaration)))((err: Error, httpResponse: msRest.HttpResponse) => {
       if (err) {
-        return cb(err);
+        cb(err);
+      } else {
+        @(Model.BuildResultInitialization("httpResponse")).then((httpResponseBody: any) => {
+          cb(err, httpResponseBody, httpResponse.request, httpResponse);
+        });
       }
-      let result = @(Model.BuildResultInitialization("data"));
-      return cb(err, result, data.request, data.response);
     });
   }
 }

@@ -9,6 +9,7 @@ using System.Text;
 using AutoRest.Core.Model;
 using AutoRest.Core.Utilities;
 using AutoRest.Extensions;
+using AutoRest.TypeScript.DSL;
 using Newtonsoft.Json;
 
 namespace AutoRest.TypeScript.Model

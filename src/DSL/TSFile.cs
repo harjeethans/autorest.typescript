@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AutoRest.TypeScript
+namespace AutoRest.TypeScript.DSL
 {
     /// <summary>
     /// A TypeScript DSL representation for a TypeScript file.
@@ -85,6 +85,36 @@ namespace AutoRest.TypeScript
             {
                 builder.Line(";");
             }
+        }
+
+        /// <summary>
+        /// Add an exported constant variable to this TSFile.
+        /// </summary>
+        /// <param name="variableName">The name of the variable to add.</param>
+        /// <param name="variableType">The type of the variable to add.</param>
+        /// <param name="valueAction">The action that will be invoked to create the value of the added variable.</param>
+        public void ConstVariable(string variableName, string variableType, Action<TSValue> valueAction)
+        {
+            builder.Text($"const {variableName}: {variableType} = ");
+            try
+            {
+                valueAction.Invoke(new TSValue(builder));
+            }
+            finally
+            {
+                builder.Line(";");
+            }
+        }
+
+        /// <summary>
+        /// Add an exported constant variable to this TSFile.
+        /// </summary>
+        /// <param name="variableName">The name of the variable to add.</param>
+        /// <param name="variableType">The type of the variable to add.</param>
+        /// <param name="valueAction">The action that will be invoked to create the value of the added variable.</param>
+        public void ConstVariable(string variableName, string variableType, Action<TSObject> valueAction)
+        {
+            ConstVariable(variableName, variableType, (TSValue tsValue) => tsValue.Object(valueAction));
         }
 
         /// <summary>

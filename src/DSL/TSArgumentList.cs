@@ -4,7 +4,7 @@
 
 using System;
 
-namespace AutoRest.TypeScript
+namespace AutoRest.TypeScript.DSL
 {
     /// <summary>
     /// The TypeScript DSL representation for adding arguments to a function call's argument list.
@@ -38,16 +38,6 @@ namespace AutoRest.TypeScript
         }
 
         /// <summary>
-        /// Add a text (not a quoted-string) argument to this argument list.
-        /// </summary>
-        /// <param name="text">The raw text argument to add.</param>
-        public override void Text(string text)
-        {
-            BeforeArgumentAdded();
-            base.Text(text);
-        }
-
-        /// <summary>
         /// Add a quoted-string argument to this argument list.
         /// </summary>
         /// <param name="text">The text that will be wrapped in double-quotes and then added.</param>
@@ -69,6 +59,26 @@ namespace AutoRest.TypeScript
         }
 
         /// <summary>
+        /// Add a text (not a quoted-string) argument to this argument list.
+        /// </summary>
+        /// <param name="text">The raw text argument to add.</param>
+        public override void Text(string text)
+        {
+            BeforeArgumentAdded();
+            base.Text(text);
+        }
+
+        /// <summary>
+        /// Add a JSON array to this TSValue.
+        /// </summary>
+        /// <param name="arrayAction">The action that will be invoked to produce the elements of the JSON array.</param>
+        public override void Array(Action<TSArray> arrayAction)
+        {
+            BeforeArgumentAdded();
+            base.Array(arrayAction);
+        }
+
+        /// <summary>
         /// Add an object argument to this argument list.
         /// </summary>
         /// <param name="objectAction">The action that will be used to populate the properties of the object.</param>
@@ -76,6 +86,34 @@ namespace AutoRest.TypeScript
         {
             BeforeArgumentAdded();
             base.Object(objectAction);
+        }
+
+        /// <summary>
+        /// Add a boolean value to this TSValue.
+        /// </summary>
+        /// <param name="value">The boolean value to add to this TSValue.</param>
+        public override void Boolean(bool value)
+        {
+            BeforeArgumentAdded();
+            base.Boolean(value);
+        }
+
+        /// <summary>
+        /// Add a null value to this TSValue.
+        /// </summary>
+        public override void Null()
+        {
+            BeforeArgumentAdded();
+            base.Null();
+        }
+
+        /// <summary>
+        /// Add an undefined value to this TSValue.
+        /// </summary>
+        public override void Undefined()
+        {
+            BeforeArgumentAdded();
+            base.Undefined();
         }
     }
 }

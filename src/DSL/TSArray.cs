@@ -4,7 +4,7 @@
 
 using System;
 
-namespace AutoRest.TypeScript
+namespace AutoRest.TypeScript.DSL
 {
     /// <summary>
     /// A TypeScript DSL representation for a JSON array.

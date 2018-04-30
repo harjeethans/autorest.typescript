@@ -3,13 +3,14 @@
 
 using AutoRest.Core;
 using AutoRest.Core.Model;
+using AutoRest.TypeScript.DSL;
 using AutoRest.TypeScript.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace AutoRest.TypeScript
+namespace AutoRest.TypeScript.Generators
 {
     /// <summary>
     /// The collection of functions that are responsible for creating the TypeSpec index file (typeSpecs.ts).
@@ -175,6 +176,10 @@ namespace AutoRest.TypeScript
                             imports.Add("timeSpanSpec");
                             break;
 
+                        case KnownPrimaryType.UnixTime:
+                            imports.Add("unixTimeSpec");
+                            break;
+
                         case KnownPrimaryType.Uuid:
                             imports.Add("uuidSpec");
                             break;
@@ -220,19 +225,19 @@ namespace AutoRest.TypeScript
                     {
                         argumentList.Object((TSObject compositeSpecProperties) =>
                         {
-                            compositeSpecProperties.Property("typeName", $"\"{compositeType.Name}\"");
+                            compositeSpecProperties.TextProperty("typeName", $"\"{compositeType.Name}\"");
                             if (compositeType.BaseIsPolymorphic || compositeType.IsPolymorphic)
                             {
-                                compositeSpecProperties.Property("polymorphism", (TSObject polymorphism) =>
+                                compositeSpecProperties.ObjectProperty("polymorphism", (TSObject polymorphism) =>
                                 {
                                     if (compositeType.BaseModelType != null)
                                     {
-                                        polymorphism.Property("inheritsFrom", compositeType.BaseModelType.Name);
+                                        polymorphism.TextProperty("inheritsFrom", compositeType.BaseModelType.Name);
                                     }
 
                                     if (derivedTypesMap.TryGetValue(compositeType, out IList<CompositeType> derivedTypes))
                                     {
-                                        polymorphism.Property("inheritedBy", (TSArray inheritedBy) =>
+                                        polymorphism.ArrayProperty("inheritedBy", (TSArray inheritedBy) =>
                                         {
                                             foreach (CompositeType derivedType in derivedTypes)
                                             {
@@ -244,50 +249,50 @@ namespace AutoRest.TypeScript
                                     Property polymorphicDiscriminatorProperty = compositeType.PolymorphicDiscriminatorProperty;
                                     if (compositeType.BaseModelType == null || polymorphicDiscriminatorProperty.Name != compositeType.BaseModelType.PolymorphicDiscriminatorProperty.Name)
                                     {
-                                        polymorphism.Property("discriminatorPropertyName", $"\"{polymorphicDiscriminatorProperty.Name}\"");
+                                        polymorphism.TextProperty("discriminatorPropertyName", $"\"{polymorphicDiscriminatorProperty.Name}\"");
                                         if (polymorphicDiscriminatorProperty.Name != polymorphicDiscriminatorProperty.SerializedName)
                                         {
-                                            polymorphism.Property("discriminatorPropertySerializedName", $"\"{polymorphicDiscriminatorProperty.SerializedName}\"");
+                                            polymorphism.TextProperty("discriminatorPropertySerializedName", $"\"{polymorphicDiscriminatorProperty.SerializedName}\"");
                                         }
                                     }
 
-                                    polymorphism.Property("discriminatorPropertyValue", $"\"{compositeType.SerializedName}\"");
+                                    polymorphism.TextProperty("discriminatorPropertyValue", $"\"{compositeType.SerializedName}\"");
                                 });
                             }
-                            compositeSpecProperties.Property("propertySpecs", (TSObject propertySpecs) =>
+                            compositeSpecProperties.ObjectProperty("propertySpecs", (TSObject propertySpecs) =>
                             {
                                 foreach (Property property in compositeType.ComposedProperties)
                                 {
                                     propertySpecs.DocumentationComment(property.Summary, property.Documentation);
-                                    propertySpecs.Property(property.Name, (TSObject propertySpec) =>
+                                    propertySpecs.ObjectProperty(property.Name, (TSObject propertySpec) =>
                                     {
                                         if (property.IsRequired)
                                         {
-                                            propertySpec.Property("required", true);
+                                            propertySpec.BooleanProperty("required", true);
                                         }
 
                                         if (isXML)
                                         {
                                             if (property.XmlIsAttribute)
                                             {
-                                                propertySpec.Property("xmlIsAttribute", true);
+                                                propertySpec.BooleanProperty("xmlIsAttribute", true);
                                             }
 
                                             if (property.XmlIsWrapped)
                                             {
-                                                propertySpec.Property("xmlIsWrapped", true);
+                                                propertySpec.BooleanProperty("xmlIsWrapped", true);
                                             }
 
                                             if (!string.IsNullOrEmpty(property.XmlName) && property.Name != property.XmlName)
                                             {
-                                                propertySpec.Property("xmlName", $"\"{property.XmlName}\"");
+                                                propertySpec.TextProperty("xmlName", $"\"{property.XmlName}\"");
                                             }
                                         }
                                         else
                                         {
                                             if (!string.IsNullOrEmpty(property.SerializedName) && property.Name != property.SerializedName)
                                             {
-                                                propertySpec.Property("serializedName", $"\"{property.SerializedName}\"");
+                                                propertySpec.TextProperty("serializedName", $"\"{property.SerializedName}\"");
                                             }
                                         }
 
@@ -380,6 +385,10 @@ namespace AutoRest.TypeScript
 
                     case KnownPrimaryType.TimeSpan:
                         tsValue.Text("timeSpanSpec");
+                        break;
+
+                    case KnownPrimaryType.UnixTime:
+                        tsValue.Text("unixTimeSpec");
                         break;
 
                     case KnownPrimaryType.Uuid:

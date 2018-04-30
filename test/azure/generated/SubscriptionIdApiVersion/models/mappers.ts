@@ -62,3 +62,37 @@ export const ErrorModel = {
     }
   }
 };
+
+export const MicrosoftAzureTestUrlOptions = {
+  required: false,
+  type: {
+    name: 'Composite',
+    className: 'MicrosoftAzureTestUrlOptions',
+    modelProperties: {
+      acceptLanguage: {
+        required: false,
+        serializedName: 'accept-language',
+        defaultValue: 'en-US',
+        type: {
+          name: 'String'
+        }
+      },
+      longRunningOperationRetryTimeout: {
+        required: false,
+        serializedName: 'longRunningOperationRetryTimeout',
+        defaultValue: 30,
+        type: {
+          name: 'Number'
+        }
+      },
+      generateClientRequestId: {
+        required: false,
+        serializedName: 'generateClientRequestId',
+        defaultValue: true,
+        type: {
+          name: 'Boolean'
+        }
+      }
+    }
+  }
+};

@@ -343,6 +343,40 @@ export const PagingGetMultiplePagesWithOffsetNextOptionalParams = {
   }
 };
 
+export const AutoRestPagingTestServiceOptions = {
+  required: false,
+  type: {
+    name: 'Composite',
+    className: 'AutoRestPagingTestServiceOptions',
+    modelProperties: {
+      acceptLanguage: {
+        required: false,
+        serializedName: 'accept-language',
+        defaultValue: 'en-US',
+        type: {
+          name: 'String'
+        }
+      },
+      longRunningOperationRetryTimeout: {
+        required: false,
+        serializedName: 'longRunningOperationRetryTimeout',
+        defaultValue: 30,
+        type: {
+          name: 'Number'
+        }
+      },
+      generateClientRequestId: {
+        required: false,
+        serializedName: 'generateClientRequestId',
+        defaultValue: true,
+        type: {
+          name: 'Boolean'
+        }
+      }
+    }
+  }
+};
+
 export const ProductResult = {
   required: false,
   serializedName: 'ProductResult',

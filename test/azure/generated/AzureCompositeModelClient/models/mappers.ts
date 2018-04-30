@@ -1452,6 +1452,40 @@ export const ReadonlypropertyPutValidOptionalParams = {
   }
 };
 
+export const AzureCompositeModelOptions = {
+  required: false,
+  type: {
+    name: 'Composite',
+    className: 'AzureCompositeModelOptions',
+    modelProperties: {
+      acceptLanguage: {
+        required: false,
+        serializedName: 'accept-language',
+        defaultValue: 'en-US',
+        type: {
+          name: 'String'
+        }
+      },
+      longRunningOperationRetryTimeout: {
+        required: false,
+        serializedName: 'longRunningOperationRetryTimeout',
+        defaultValue: 30,
+        type: {
+          name: 'Number'
+        }
+      },
+      generateClientRequestId: {
+        required: false,
+        serializedName: 'generateClientRequestId',
+        defaultValue: true,
+        type: {
+          name: 'Boolean'
+        }
+      }
+    }
+  }
+};
+
 export const discriminators = {
   'Fish' : Fish,
   'Fish.salmon' : Salmon,

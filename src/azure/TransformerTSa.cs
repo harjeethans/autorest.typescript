@@ -99,10 +99,7 @@ namespace AutoRest.TypeScript.Azure
 
         public override void CreateModelTypeForOptionalClientProperties(CodeModelTS cm)
         {
-            List<string> predefinedOptionalProperties = new List<string>() {
-                "requestOptions", "filters", "noRetryPolicy", "apiVersion",
-                "acceptLanguage", "longRunningOperationRetryTimeout",
-                "generateClientRequestId", "rpRegistrationRetryTimeout" };
+            List<string> predefinedOptionalProperties = new List<string>() { "requestOptions", "filters", "apiVersion" };
             var optionalProperitesOnClient = cm.Properties.Where(
                 p => (!p.IsRequired || p.IsRequired && !string.IsNullOrEmpty(p.DefaultValue))
                 && !p.IsConstant && !predefinedOptionalProperties.Contains(p.Name));

@@ -688,6 +688,40 @@ export const StorageAccountsRegenerateKeyOptionalParams = {
   }
 };
 
+export const StorageManagementClientOptions = {
+  required: false,
+  type: {
+    name: 'Composite',
+    className: 'StorageManagementClientOptions',
+    modelProperties: {
+      acceptLanguage: {
+        required: false,
+        serializedName: 'accept-language',
+        defaultValue: 'en-US',
+        type: {
+          name: 'String'
+        }
+      },
+      longRunningOperationRetryTimeout: {
+        required: false,
+        serializedName: 'longRunningOperationRetryTimeout',
+        defaultValue: 30,
+        type: {
+          name: 'Number'
+        }
+      },
+      generateClientRequestId: {
+        required: false,
+        serializedName: 'generateClientRequestId',
+        defaultValue: true,
+        type: {
+          name: 'Boolean'
+        }
+      }
+    }
+  }
+};
+
 export const StorageAccountListResult = {
   required: false,
   serializedName: 'StorageAccountListResult',

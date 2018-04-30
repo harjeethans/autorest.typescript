@@ -9,7 +9,7 @@
 @inherits AutoRest.Core.Template<MethodTS>
 
 @(Model.GenerateMethodDocumentation(MethodTS.MethodFlavor.HttpOperationResponse))
-async @(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclarationTS(true, true))): Promise<msRest.HttpOperationResponse> {
+async @(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclarationTS(true, true))): Promise<msRest.HttpResponse> {
   let client = @(Model.ClientReference);
 
   @if (Model.OptionsParameterModelType.Properties.Count > 0)
@@ -67,18 +67,14 @@ async @(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParamet
   @(Model.BuildUrl("requestUrl"))
   @EmptyLine
   // Create HTTP transport objects
-  let httpRequest = new WebResource();
-  httpRequest.method = '@(Model.HttpMethod.ToString().ToUpper())';
-  httpRequest.url = requestUrl;
-  httpRequest.headers = {};
+  const httpRequest = new msRest.HttpRequest({ method: "@(Model.HttpMethod.ToString().ToUpper())", url: requestUrl });
 
   // Set Headers
-  httpRequest.headers['Content-Type'] = '@(Model.RequestContentType)';
-  @(Model.SetDefaultHeaders)
+  httpRequest.headers.set("Content-Type", "@(Model.RequestContentType)");
   @foreach (var parameter in Model.LogicalParameters.Where(p => p.Location == ParameterLocation.Header))
   {
   @:if (@(parameter.Name) !== undefined && @(parameter.Name) !== null) {
-  @:  httpRequest.headers['@(parameter.SerializedName)'] = @parameter.ModelType.ToString(parameter.Name);
+  @:  httpRequest.headers.set("@(parameter.SerializedName)", @parameter.ModelType.ToString(parameter.Name));
   @:}
   }
   if(options && options.customHeaders) {

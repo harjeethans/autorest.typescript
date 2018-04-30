@@ -6,7 +6,7 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-import { compositeSpec, CompositeTypeSpec, numberSpec, stringSpec } from "ms-rest-js";
+import { booleanSpec, compositeSpec, CompositeTypeSpec, numberSpec, stringSpec } from "ms-rest-js";
 
 export const ErrorModel: CompositeTypeSpec = compositeSpec({
   typeName: "ErrorModel",
@@ -110,6 +110,32 @@ export const OdataGetWithFilterOptionalParams: CompositeTypeSpec = compositeSpec
     orderby: {
       serializedName: "$orderby",
       valueSpec: stringSpec
+    }
+  }
+});
+
+export const AutoRestAzureSpecialParametersTestClientOptions: CompositeTypeSpec = compositeSpec({
+  typeName: "AutoRestAzureSpecialParametersTestClientOptions",
+  propertySpecs: {
+    /**
+     * Gets or sets the preferred language for the response.
+     */
+    acceptLanguage: {
+      serializedName: "accept-language",
+      valueSpec: stringSpec
+    },
+    /**
+     * Gets or sets the retry timeout in seconds for Long Running Operations. Default value is 30.
+     */
+    longRunningOperationRetryTimeout: {
+      valueSpec: numberSpec
+    },
+    /**
+     * When set to true a unique x-ms-client-request-id value is generated and included in each
+     * request. Default is true.
+     */
+    generateClientRequestId: {
+      valueSpec: booleanSpec
     }
   }
 });

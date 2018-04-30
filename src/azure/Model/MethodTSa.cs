@@ -7,6 +7,7 @@ using System.Net;
 using AutoRest.Core.Model;
 using AutoRest.Core.Utilities;
 using AutoRest.Extensions.Azure;
+using AutoRest.TypeScript.DSL;
 using AutoRest.TypeScript.Model;
 using Newtonsoft.Json;
 
@@ -46,33 +47,13 @@ namespace AutoRest.TypeScript.Azure.Model
         {
             get
             {
-                var sb = new IndentedStringBuilder();
-                if (this.HttpMethod == HttpMethod.Head &&
-                    this.ReturnType.Body != null)
+                string result = "";
+                if (HttpMethod == HttpMethod.Head && ReturnType.Body != null)
                 {
-                    HttpStatusCode code = this.Responses.Keys.FirstOrDefault(AzureExtensions.HttpHeadStatusCodeSuccessFunc);
-                    sb.AppendFormat("operationRes.parsedBody = (statusCode === {0});", (int)code).AppendLine();
+                    HttpStatusCode code = Responses.Keys.FirstOrDefault(AzureExtensions.HttpHeadStatusCodeSuccessFunc);
+                    result = $"httpResponse.deserializedBody = () => (statusCode === {(int)code});";
                 }
-
-                return sb.ToString();
-            }
-        }
-
-        /// <summary>
-        /// Gets the expression for default header setting.
-        /// </summary>
-        [JsonIgnore]
-        public override string SetDefaultHeaders
-        {
-            get
-            {
-                var sb = new IndentedStringBuilder();
-                sb.AppendLine("if ({0}.generateClientRequestId) {{", this.ClientReference).Indent()
-                    .AppendLine("httpRequest.headers['{0}'] = msRest.generateUuid();",
-                        this.ClientRequestIdString, this.ClientReference).Outdent()
-                  .AppendLine("}")
-                  .AppendLine(base.SetDefaultHeaders);
-                return sb.ToString();
+                return result;
             }
         }
 
