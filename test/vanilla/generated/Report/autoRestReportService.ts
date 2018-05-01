@@ -11,10 +11,6 @@
 import * as msRest from "ms-rest-js";
 import * as Models from "./models";
 import * as Mappers from "./models/mappers";
-const WebResource = msRest.WebResource;
-
-const packageName = "";
-const packageVersion = "";
 
 class AutoRestReportService extends msRest.ServiceClient {
   baseUri: string;

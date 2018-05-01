@@ -12,8 +12,6 @@ import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 import * as msRest from "ms-rest-js";
 import * as msRestAzure from "ms-rest-azure-js";
-const WebResource = msRest.WebResource;
-
 
 class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClient {
 

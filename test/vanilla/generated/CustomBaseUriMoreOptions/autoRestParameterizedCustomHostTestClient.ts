@@ -13,9 +13,6 @@ import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
-const packageName = "";
-const packageVersion = "";
-
 class AutoRestParameterizedCustomHostTestClient extends msRest.ServiceClient {
   subscriptionId: string;
   dnsSuffix?: string;

@@ -14,7 +14,6 @@ import * as msRest from "ms-rest-js";
 import * as msRestAzure from "ms-rest-azure-js";
 import * as operations from "./operations";
 
-
 class StorageManagementClient extends msRestAzure.AzureServiceClient {
 
   credentials: msRest.ServiceClientCredentials;

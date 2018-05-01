@@ -13,8 +13,6 @@ import * as Mappers from "./models/mappers";
 import * as msRest from "ms-rest-js";
 import * as msRestAzure from "ms-rest-azure-js";
 import * as operations from "./operations";
-const WebResource = msRest.WebResource;
-
 
 class AzureCompositeModel extends msRestAzure.AzureServiceClient {
 
