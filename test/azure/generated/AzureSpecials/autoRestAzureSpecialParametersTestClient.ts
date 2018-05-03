@@ -15,19 +15,11 @@ import * as msRestAzure from "ms-rest-azure-js";
 import * as operations from "./operations";
 
 class AutoRestAzureSpecialParametersTestClient extends msRestAzure.AzureServiceClient {
-
-  credentials: msRest.ServiceClientCredentials;
-
-  subscriptionId: string;
-
-  apiVersion: string;
-
-  acceptLanguage: string;
-
-  longRunningOperationRetryTimeout: number;
-
-  generateClientRequestId: boolean;
-  baseUri: string;
+  /**
+   * The api version, which appears in the query, the value is always '2015-07-01-preview'
+   */
+  public apiVersion?: string;
+  public baseUri: string;
 
   // Operation groups
   xMsClientRequestId: operations.XMsClientRequestId;
@@ -68,44 +60,18 @@ class AutoRestAzureSpecialParametersTestClient extends msRestAzure.AzureServiceC
    *
    */
   constructor(credentials: msRest.ServiceClientCredentials, subscriptionId: string, baseUri?: string, options?: Models.AutoRestAzureSpecialParametersTestClientOptions) {
-    if (credentials === null || credentials === undefined) {
-      throw new Error('\'credentials\' cannot be null.');
-    }
-    if (subscriptionId === null || subscriptionId === undefined) {
-      throw new Error('\'subscriptionId\' cannot be null.');
-    }
+  if (credentials === null || credentials === undefined) {
+    throw new Error('\'credentials\' cannot be null.');
+  }
+  if (subscriptionId === null || subscriptionId === undefined) {
+    throw new Error('\'subscriptionId\' cannot be null.');
+  }
 
-    if (!options) options = {};
-
-    super(credentials, subscriptionId, {
-      acceptLanguage: options.acceptLanguage,
-      generateClientRequestId: options.generateClientRequestId,
-      longRunningOperationRetryTimeoutInSeconds: options.longRunningOperationRetryTimeoutInSeconds,
-      rpRegistrationRetryTimeoutInSeconds: options.rpRegistrationRetryTimeoutInSeconds,
-      noRetryPolicy: options.noRetryPolicy,
-      nodeJsUserAgentPackage: options.nodeJsUserAgentPackage || "/$"
-    });
+    super(credentials, subscriptionId, options);
 
     this.apiVersion = '2015-07-01-preview';
-    this.acceptLanguage = 'en-US';
-    this.longRunningOperationRetryTimeout = 30;
-    this.generateClientRequestId = true;
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
-    this.credentials = credentials;
-    this.subscriptionId = subscriptionId;
+    this.baseUri = baseUri || "http://localhost:3000";
 
-    if(options.acceptLanguage !== null && options.acceptLanguage !== undefined) {
-      this.acceptLanguage = options.acceptLanguage;
-    }
-    if(options.longRunningOperationRetryTimeout !== null && options.longRunningOperationRetryTimeout !== undefined) {
-      this.longRunningOperationRetryTimeout = options.longRunningOperationRetryTimeout;
-    }
-    if(options.generateClientRequestId !== null && options.generateClientRequestId !== undefined) {
-      this.generateClientRequestId = options.generateClientRequestId;
-    }
     this.xMsClientRequestId = new operations.XMsClientRequestId(this);
     this.subscriptionInCredentials = new operations.SubscriptionInCredentials(this);
     this.subscriptionInMethod = new operations.SubscriptionInMethod(this);

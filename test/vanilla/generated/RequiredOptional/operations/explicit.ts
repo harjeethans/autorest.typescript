@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { AutoRestRequiredOptionalTestService } from "../autoRestRequiredOptionalTestService";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a Explicit. */
 export class Explicit {
   private readonly client: AutoRestRequiredOptionalTestService;
@@ -44,7 +42,7 @@ export class Explicit {
     let client = this.client;
     // Validate
     try {
-      if (bodyParameter === null || bodyParameter === undefined || typeof bodyParameter !== 'number') {
+      if (bodyParameter == undefined || typeof bodyParameter !== 'number') {
         throw new Error('bodyParameter cannot be null or undefined and it must be of type number.');
       }
     } catch (error) {
@@ -60,9 +58,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -88,11 +86,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -110,20 +108,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -144,7 +141,7 @@ export class Explicit {
     let bodyParameter = (options && options.bodyParameter !== undefined) ? options.bodyParameter : undefined;
     // Validate
     try {
-      if (bodyParameter !== null && bodyParameter !== undefined && typeof bodyParameter !== 'number') {
+      if (bodyParameter != undefined && typeof bodyParameter !== 'number') {
         throw new Error('bodyParameter must be of type number.');
       }
     } catch (error) {
@@ -160,9 +157,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -188,11 +185,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -211,7 +208,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -234,7 +230,7 @@ export class Explicit {
     let client = this.client;
     // Validate
     try {
-      if (value === null || value === undefined || typeof value !== 'number') {
+      if (value == undefined || typeof value !== 'number') {
         throw new Error('value cannot be null or undefined and it must be of type number.');
       }
     } catch (error) {
@@ -255,9 +251,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -277,11 +273,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -299,20 +295,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -334,7 +329,7 @@ export class Explicit {
     let value = (options && options.value !== undefined) ? options.value : undefined;
     // Validate
     try {
-      if (value !== null && value !== undefined && typeof value !== 'number') {
+      if (value != undefined && typeof value !== 'number') {
         throw new Error('value must be of type number.');
       }
     } catch (error) {
@@ -355,9 +350,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -377,11 +372,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -400,7 +395,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -422,7 +416,7 @@ export class Explicit {
     let client = this.client;
     // Validate
     try {
-      if (headerParameter === null || headerParameter === undefined || typeof headerParameter !== 'number') {
+      if (headerParameter == undefined || typeof headerParameter !== 'number') {
         throw new Error('headerParameter cannot be null or undefined and it must be of type number.');
       }
     } catch (error) {
@@ -441,18 +435,18 @@ export class Explicit {
       httpRequest.headers.set("headerParameter", headerParameter.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -470,20 +464,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -505,7 +498,7 @@ export class Explicit {
     let headerParameter = (options && options.headerParameter !== undefined) ? options.headerParameter : undefined;
     // Validate
     try {
-      if (headerParameter !== null && headerParameter !== undefined && typeof headerParameter !== 'number') {
+      if (headerParameter != undefined && typeof headerParameter !== 'number') {
         throw new Error('headerParameter must be of type number.');
       }
     } catch (error) {
@@ -524,18 +517,18 @@ export class Explicit {
       httpRequest.headers.set("headerParameter", headerParameter.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -554,7 +547,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -576,7 +568,7 @@ export class Explicit {
     let client = this.client;
     // Validate
     try {
-      if (bodyParameter === null || bodyParameter === undefined || typeof bodyParameter.valueOf() !== 'string') {
+      if (bodyParameter == undefined || typeof bodyParameter !== "string") {
         throw new Error('bodyParameter cannot be null or undefined and it must be of type string.');
       }
     } catch (error) {
@@ -592,9 +584,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -620,11 +612,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -642,20 +634,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -676,7 +667,7 @@ export class Explicit {
     let bodyParameter = (options && options.bodyParameter !== undefined) ? options.bodyParameter : undefined;
     // Validate
     try {
-      if (bodyParameter !== null && bodyParameter !== undefined && typeof bodyParameter.valueOf() !== 'string') {
+      if (bodyParameter != undefined && typeof bodyParameter !== "string") {
         throw new Error('bodyParameter must be of type string.');
       }
     } catch (error) {
@@ -692,9 +683,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -720,11 +711,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -743,7 +734,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -766,7 +756,7 @@ export class Explicit {
     let client = this.client;
     // Validate
     try {
-      if (value === null || value === undefined || typeof value.valueOf() !== 'string') {
+      if (value == undefined || typeof value !== "string") {
         throw new Error('value cannot be null or undefined and it must be of type string.');
       }
     } catch (error) {
@@ -787,9 +777,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -809,11 +799,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -831,20 +821,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -866,7 +855,7 @@ export class Explicit {
     let value = (options && options.value !== undefined) ? options.value : undefined;
     // Validate
     try {
-      if (value !== null && value !== undefined && typeof value.valueOf() !== 'string') {
+      if (value != undefined && typeof value !== "string") {
         throw new Error('value must be of type string.');
       }
     } catch (error) {
@@ -887,9 +876,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -909,11 +898,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -932,7 +921,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -954,7 +942,7 @@ export class Explicit {
     let client = this.client;
     // Validate
     try {
-      if (headerParameter === null || headerParameter === undefined || typeof headerParameter.valueOf() !== 'string') {
+      if (headerParameter == undefined || typeof headerParameter !== "string") {
         throw new Error('headerParameter cannot be null or undefined and it must be of type string.');
       }
     } catch (error) {
@@ -973,18 +961,18 @@ export class Explicit {
       httpRequest.headers.set("headerParameter", headerParameter);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1002,20 +990,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1037,7 +1024,7 @@ export class Explicit {
     let bodyParameter = (options && options.bodyParameter !== undefined) ? options.bodyParameter : undefined;
     // Validate
     try {
-      if (bodyParameter !== null && bodyParameter !== undefined && typeof bodyParameter.valueOf() !== 'string') {
+      if (bodyParameter != undefined && typeof bodyParameter !== "string") {
         throw new Error('bodyParameter must be of type string.');
       }
     } catch (error) {
@@ -1056,18 +1043,18 @@ export class Explicit {
       httpRequest.headers.set("bodyParameter", bodyParameter);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1086,7 +1073,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1124,9 +1110,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1146,11 +1132,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1168,20 +1154,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1210,9 +1195,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1232,11 +1217,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1255,7 +1240,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1299,9 +1283,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1321,11 +1305,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1343,20 +1327,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1391,9 +1374,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1413,11 +1396,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1436,7 +1419,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1462,7 +1444,7 @@ export class Explicit {
         throw new Error('bodyParameter cannot be null or undefined and it must be of type array.');
       }
       for (let i = 0; i < bodyParameter.length; i++) {
-        if (bodyParameter[i] !== null && bodyParameter[i] !== undefined && typeof bodyParameter[i].valueOf() !== 'string') {
+        if (bodyParameter[i] != undefined && typeof bodyParameter[i] !== "string") {
           throw new Error('bodyParameter[i] must be of type string.');
         }
       }
@@ -1479,9 +1461,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1514,11 +1496,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1536,20 +1518,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1572,7 +1553,7 @@ export class Explicit {
     try {
       if (Array.isArray(bodyParameter)) {
         for (let i = 0; i < bodyParameter.length; i++) {
-          if (bodyParameter[i] !== null && bodyParameter[i] !== undefined && typeof bodyParameter[i].valueOf() !== 'string') {
+          if (bodyParameter[i] != undefined && typeof bodyParameter[i] !== "string") {
             throw new Error('bodyParameter[i] must be of type string.');
           }
         }
@@ -1590,9 +1571,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1625,11 +1606,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1648,7 +1629,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1675,7 +1655,7 @@ export class Explicit {
         throw new Error('value cannot be null or undefined and it must be of type array.');
       }
       for (let i = 0; i < value.length; i++) {
-        if (value[i] !== null && value[i] !== undefined && typeof value[i].valueOf() !== 'string') {
+        if (value[i] != undefined && typeof value[i] !== "string") {
           throw new Error('value[i] must be of type string.');
         }
       }
@@ -1697,9 +1677,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1719,11 +1699,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1741,20 +1721,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1778,7 +1757,7 @@ export class Explicit {
     try {
       if (Array.isArray(value)) {
         for (let i = 0; i < value.length; i++) {
-          if (value[i] !== null && value[i] !== undefined && typeof value[i].valueOf() !== 'string') {
+          if (value[i] != undefined && typeof value[i] !== "string") {
             throw new Error('value[i] must be of type string.');
           }
         }
@@ -1801,9 +1780,9 @@ export class Explicit {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1823,11 +1802,11 @@ export class Explicit {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1846,7 +1825,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1872,7 +1850,7 @@ export class Explicit {
         throw new Error('headerParameter cannot be null or undefined and it must be of type array.');
       }
       for (let i = 0; i < headerParameter.length; i++) {
-        if (headerParameter[i] !== null && headerParameter[i] !== undefined && typeof headerParameter[i].valueOf() !== 'string') {
+        if (headerParameter[i] != undefined && typeof headerParameter[i] !== "string") {
           throw new Error('headerParameter[i] must be of type string.');
         }
       }
@@ -1892,18 +1870,18 @@ export class Explicit {
       httpRequest.headers.set("headerParameter", headerParameter.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode < 200 || statusCode >= 300) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1921,20 +1899,19 @@ export class Explicit {
         body: deserializedBody
       });
     }
+    deserializedBody = await httpResponse.deserializedBody();
     try {
       if (deserializedBody != undefined) {
         const resultMapper = Mappers.ErrorModel;
         deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
     } catch (error) {
-      const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-      throw new msRest.RestError(errorMessage, {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
         request: httpRequest,
         response: httpResponse
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1958,7 +1935,7 @@ export class Explicit {
     try {
       if (Array.isArray(headerParameter)) {
         for (let i = 0; i < headerParameter.length; i++) {
-          if (headerParameter[i] !== null && headerParameter[i] !== undefined && typeof headerParameter[i].valueOf() !== 'string') {
+          if (headerParameter[i] != undefined && typeof headerParameter[i] !== "string") {
             throw new Error('headerParameter[i] must be of type string.');
           }
         }
@@ -1979,18 +1956,18 @@ export class Explicit {
       httpRequest.headers.set("headerParameter", headerParameter.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -2009,7 +1986,6 @@ export class Explicit {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

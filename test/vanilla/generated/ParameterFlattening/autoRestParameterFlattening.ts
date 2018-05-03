@@ -14,7 +14,7 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestParameterFlattening extends msRest.ServiceClient {
-  baseUri: string;
+  public baseUri: string;
 
   // Operation groups
   availabilitySets: operations.AvailabilitySets;
@@ -41,14 +41,10 @@ class AutoRestParameterFlattening extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
+    this.baseUri = baseUri || "http://localhost:3000";
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     this.availabilitySets = new operations.AvailabilitySets(this);
     this.serializer = new msRest.Serializer(Mappers, false);
   }

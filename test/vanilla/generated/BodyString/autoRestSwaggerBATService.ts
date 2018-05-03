@@ -14,7 +14,7 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestSwaggerBATService extends msRest.ServiceClient {
-  baseUri: string;
+  public baseUri: string;
 
   // Operation groups
   string: operations.String;
@@ -42,14 +42,10 @@ class AutoRestSwaggerBATService extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
+    this.baseUri = baseUri || "http://localhost:3000";
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     this.string = new operations.String(this);
     this.enumModel = new operations.EnumModel(this);
     this.serializer = new msRest.Serializer(Mappers, false);

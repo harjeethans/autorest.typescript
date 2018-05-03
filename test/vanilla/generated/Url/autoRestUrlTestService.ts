@@ -14,9 +14,15 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestUrlTestService extends msRest.ServiceClient {
-  globalStringPath: string;
-  globalStringQuery?: string;
-  baseUri: string;
+  /**
+   * A string value 'globalItemStringPath' that appears in the path
+   */
+  public globalStringPath: string;
+  /**
+   * should contain value null
+   */
+  public globalStringQuery?: string;
+  public baseUri: string;
 
   // Operation groups
   paths: operations.Paths;
@@ -52,18 +58,14 @@ class AutoRestUrlTestService extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
+    this.baseUri = baseUri || "http://localhost:3000";
     this.globalStringPath = globalStringPath;
-
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
-    if(options.globalStringQuery !== null && options.globalStringQuery !== undefined) {
+    if (options.globalStringQuery != undefined) {
       this.globalStringQuery = options.globalStringQuery;
     }
+
     this.paths = new operations.Paths(this);
     this.queries = new operations.Queries(this);
     this.pathItems = new operations.PathItems(this);

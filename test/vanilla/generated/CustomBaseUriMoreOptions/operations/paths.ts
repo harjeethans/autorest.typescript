@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { AutoRestParameterizedCustomHostTestClient } from "../autoRestParameterizedCustomHostTestClient";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a Paths. */
 export class Paths {
   private readonly client: AutoRestParameterizedCustomHostTestClient;
@@ -48,22 +46,22 @@ export class Paths {
     let keyVersion = (options && options.keyVersion !== undefined) ? options.keyVersion : 'v1';
     // Validate
     try {
-      if (vault === null || vault === undefined || typeof vault.valueOf() !== 'string') {
+      if (vault == undefined || typeof vault !== "string") {
         throw new Error('vault cannot be null or undefined and it must be of type string.');
       }
-      if (secret === null || secret === undefined || typeof secret.valueOf() !== 'string') {
+      if (secret == undefined || typeof secret !== "string") {
         throw new Error('secret cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.dnsSuffix === null || this.client.dnsSuffix === undefined || typeof this.client.dnsSuffix.valueOf() !== 'string') {
+      if (this.client.dnsSuffix == undefined || typeof this.client.dnsSuffix !== "string") {
         throw new Error('this.client.dnsSuffix cannot be null or undefined and it must be of type string.');
       }
-      if (keyName === null || keyName === undefined || typeof keyName.valueOf() !== 'string') {
+      if (keyName == undefined || typeof keyName !== "string") {
         throw new Error('keyName cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (keyVersion !== null && keyVersion !== undefined && typeof keyVersion.valueOf() !== 'string') {
+      if (keyVersion != undefined && typeof keyVersion !== "string") {
         throw new Error('keyVersion must be of type string.');
       }
     } catch (error) {
@@ -91,18 +89,18 @@ export class Paths {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -121,7 +119,6 @@ export class Paths {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

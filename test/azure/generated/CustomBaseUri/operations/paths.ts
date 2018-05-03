@@ -12,8 +12,6 @@ import * as msRest from "ms-rest-js";
 import * as Mappers from "../models/mappers";
 import { AutoRestParameterizedHostTestClient } from "../autoRestParameterizedHostTestClient";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a Paths. */
 export class Paths {
   private readonly client: AutoRestParameterizedHostTestClient;
@@ -42,13 +40,13 @@ export class Paths {
     let client = this.client;
     // Validate
     try {
-      if (accountName === null || accountName === undefined || typeof accountName.valueOf() !== 'string') {
+      if (accountName == undefined || typeof accountName !== "string") {
         throw new Error('accountName cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.host === null || this.client.host === undefined || typeof this.client.host.valueOf() !== 'string') {
+      if (this.client.host == undefined || typeof this.client.host !== "string") {
         throw new Error('this.client.host cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -73,18 +71,18 @@ export class Paths {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -103,7 +101,6 @@ export class Paths {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

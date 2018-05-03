@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { AutoRestPagingTestService } from "../autoRestPagingTestService";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a Paging. */
 export class Paging {
   private readonly client: AutoRestPagingTestService;
@@ -41,7 +39,7 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -64,18 +62,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -95,21 +93,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -130,10 +127,10 @@ export class Paging {
     let pagingGetMultiplePagesOptions = (options && options.pagingGetMultiplePagesOptions !== undefined) ? options.pagingGetMultiplePagesOptions : undefined;
     // Validate
     try {
-      if (clientRequestId !== null && clientRequestId !== undefined && typeof clientRequestId.valueOf() !== 'string') {
+      if (clientRequestId != undefined && typeof clientRequestId !== "string") {
         throw new Error('clientRequestId must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -145,14 +142,14 @@ export class Paging {
       if (pagingGetMultiplePagesOptions !== null && pagingGetMultiplePagesOptions !== undefined)
       {
         maxresults = pagingGetMultiplePagesOptions.maxresults;
-        if (maxresults !== null && maxresults !== undefined && typeof maxresults !== 'number') {
+        if (maxresults != undefined && typeof maxresults !== 'number') {
           throw new Error('maxresults must be of type number.');
         }
       }
       if (pagingGetMultiplePagesOptions !== null && pagingGetMultiplePagesOptions !== undefined)
       {
         timeout = pagingGetMultiplePagesOptions.timeout;
-        if (timeout !== null && timeout !== undefined && typeof timeout !== 'number') {
+        if (timeout != undefined && typeof timeout !== 'number') {
           throw new Error('timeout must be of type number.');
         }
       }
@@ -185,18 +182,18 @@ export class Paging {
       httpRequest.headers.set("timeout", timeout.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -216,21 +213,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -253,10 +249,10 @@ export class Paging {
     let pagingGetOdataMultiplePagesOptions = (options && options.pagingGetOdataMultiplePagesOptions !== undefined) ? options.pagingGetOdataMultiplePagesOptions : undefined;
     // Validate
     try {
-      if (clientRequestId !== null && clientRequestId !== undefined && typeof clientRequestId.valueOf() !== 'string') {
+      if (clientRequestId != undefined && typeof clientRequestId !== "string") {
         throw new Error('clientRequestId must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -268,14 +264,14 @@ export class Paging {
       if (pagingGetOdataMultiplePagesOptions !== null && pagingGetOdataMultiplePagesOptions !== undefined)
       {
         maxresults = pagingGetOdataMultiplePagesOptions.maxresults;
-        if (maxresults !== null && maxresults !== undefined && typeof maxresults !== 'number') {
+        if (maxresults != undefined && typeof maxresults !== 'number') {
           throw new Error('maxresults must be of type number.');
         }
       }
       if (pagingGetOdataMultiplePagesOptions !== null && pagingGetOdataMultiplePagesOptions !== undefined)
       {
         timeout = pagingGetOdataMultiplePagesOptions.timeout;
-        if (timeout !== null && timeout !== undefined && typeof timeout !== 'number') {
+        if (timeout != undefined && typeof timeout !== 'number') {
           throw new Error('timeout must be of type number.');
         }
       }
@@ -308,18 +304,18 @@ export class Paging {
       httpRequest.headers.set("timeout", timeout.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -339,21 +335,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.OdataProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -378,13 +373,13 @@ export class Paging {
     let clientRequestId = (options && options.clientRequestId !== undefined) ? options.clientRequestId : undefined;
     // Validate
     try {
-      if (clientRequestId !== null && clientRequestId !== undefined && typeof clientRequestId.valueOf() !== 'string') {
+      if (clientRequestId != undefined && typeof clientRequestId !== "string") {
         throw new Error('clientRequestId must be of type string.');
       }
       if (pagingGetMultiplePagesWithOffsetOptions === null || pagingGetMultiplePagesWithOffsetOptions === undefined) {
         throw new Error('pagingGetMultiplePagesWithOffsetOptions cannot be null or undefined.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -397,21 +392,21 @@ export class Paging {
       if (pagingGetMultiplePagesWithOffsetOptions !== null && pagingGetMultiplePagesWithOffsetOptions !== undefined)
       {
         maxresults = pagingGetMultiplePagesWithOffsetOptions.maxresults;
-        if (maxresults !== null && maxresults !== undefined && typeof maxresults !== 'number') {
+        if (maxresults != undefined && typeof maxresults !== 'number') {
           throw new Error('maxresults must be of type number.');
         }
       }
       if (pagingGetMultiplePagesWithOffsetOptions !== null && pagingGetMultiplePagesWithOffsetOptions !== undefined)
       {
         offset = pagingGetMultiplePagesWithOffsetOptions.offset;
-        if (offset === null || offset === undefined || typeof offset !== 'number') {
+        if (offset == undefined || typeof offset !== 'number') {
           throw new Error('offset cannot be null or undefined and it must be of type number.');
         }
       }
       if (pagingGetMultiplePagesWithOffsetOptions !== null && pagingGetMultiplePagesWithOffsetOptions !== undefined)
       {
         timeout = pagingGetMultiplePagesWithOffsetOptions.timeout;
-        if (timeout !== null && timeout !== undefined && typeof timeout !== 'number') {
+        if (timeout != undefined && typeof timeout !== 'number') {
           throw new Error('timeout must be of type number.');
         }
       }
@@ -445,18 +440,18 @@ export class Paging {
       httpRequest.headers.set("timeout", timeout.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -476,21 +471,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -510,7 +504,7 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -533,18 +527,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -564,21 +558,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -599,7 +592,7 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -622,18 +615,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -653,21 +646,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -686,7 +678,7 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -709,18 +701,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -740,21 +732,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -773,7 +764,7 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -796,18 +787,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -827,21 +818,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -860,7 +850,7 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -883,18 +873,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -914,21 +904,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -951,13 +940,13 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (apiVersion === null || apiVersion === undefined || typeof apiVersion.valueOf() !== 'string') {
+      if (apiVersion == undefined || typeof apiVersion !== "string") {
         throw new Error('apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (tenant === null || tenant === undefined || typeof tenant.valueOf() !== 'string') {
+      if (tenant == undefined || typeof tenant !== "string") {
         throw new Error('tenant cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -982,18 +971,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1013,21 +1002,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.OdataProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1053,7 +1041,7 @@ export class Paging {
       if (customParameterGroup === null || customParameterGroup === undefined) {
         throw new Error('customParameterGroup cannot be null or undefined.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1065,14 +1053,14 @@ export class Paging {
       if (customParameterGroup !== null && customParameterGroup !== undefined)
       {
         apiVersion = customParameterGroup.apiVersion;
-        if (apiVersion === null || apiVersion === undefined || typeof apiVersion.valueOf() !== 'string') {
+        if (apiVersion == undefined || typeof apiVersion !== "string") {
           throw new Error('apiVersion cannot be null or undefined and it must be of type string.');
         }
       }
       if (customParameterGroup !== null && customParameterGroup !== undefined)
       {
         tenant = customParameterGroup.tenant;
-        if (tenant === null || tenant === undefined || typeof tenant.valueOf() !== 'string') {
+        if (tenant == undefined || typeof tenant !== "string") {
           throw new Error('tenant cannot be null or undefined and it must be of type string.');
         }
       }
@@ -1098,18 +1086,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1129,21 +1117,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.OdataProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1168,16 +1155,16 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (apiVersion === null || apiVersion === undefined || typeof apiVersion.valueOf() !== 'string') {
+      if (apiVersion == undefined || typeof apiVersion !== "string") {
         throw new Error('apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (tenant === null || tenant === undefined || typeof tenant.valueOf() !== 'string') {
+      if (tenant == undefined || typeof tenant !== "string") {
         throw new Error('tenant cannot be null or undefined and it must be of type string.');
       }
-      if (nextLink === null || nextLink === undefined || typeof nextLink.valueOf() !== 'string') {
+      if (nextLink == undefined || typeof nextLink !== "string") {
         throw new Error('nextLink cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1203,18 +1190,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1234,21 +1221,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.OdataProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1272,13 +1258,13 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (nextLink === null || nextLink === undefined || typeof nextLink.valueOf() !== 'string') {
+      if (nextLink == undefined || typeof nextLink !== "string") {
         throw new Error('nextLink cannot be null or undefined and it must be of type string.');
       }
       if (customParameterGroup === null || customParameterGroup === undefined) {
         throw new Error('customParameterGroup cannot be null or undefined.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1290,14 +1276,14 @@ export class Paging {
       if (customParameterGroup !== null && customParameterGroup !== undefined)
       {
         apiVersion = customParameterGroup.apiVersion;
-        if (apiVersion === null || apiVersion === undefined || typeof apiVersion.valueOf() !== 'string') {
+        if (apiVersion == undefined || typeof apiVersion !== "string") {
           throw new Error('apiVersion cannot be null or undefined and it must be of type string.');
         }
       }
       if (customParameterGroup !== null && customParameterGroup !== undefined)
       {
         tenant = customParameterGroup.tenant;
-        if (tenant === null || tenant === undefined || typeof tenant.valueOf() !== 'string') {
+        if (tenant == undefined || typeof tenant !== "string") {
           throw new Error('tenant cannot be null or undefined and it must be of type string.');
         }
       }
@@ -1324,18 +1310,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1355,21 +1341,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.OdataProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1391,10 +1376,10 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1413,18 +1398,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1444,21 +1429,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1483,13 +1467,13 @@ export class Paging {
     let pagingGetMultiplePagesOptions = (options && options.pagingGetMultiplePagesOptions !== undefined) ? options.pagingGetMultiplePagesOptions : undefined;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (clientRequestId !== null && clientRequestId !== undefined && typeof clientRequestId.valueOf() !== 'string') {
+      if (clientRequestId != undefined && typeof clientRequestId !== "string") {
         throw new Error('clientRequestId must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1501,14 +1485,14 @@ export class Paging {
       if (pagingGetMultiplePagesOptions !== null && pagingGetMultiplePagesOptions !== undefined)
       {
         maxresults = pagingGetMultiplePagesOptions.maxresults;
-        if (maxresults !== null && maxresults !== undefined && typeof maxresults !== 'number') {
+        if (maxresults != undefined && typeof maxresults !== 'number') {
           throw new Error('maxresults must be of type number.');
         }
       }
       if (pagingGetMultiplePagesOptions !== null && pagingGetMultiplePagesOptions !== undefined)
       {
         timeout = pagingGetMultiplePagesOptions.timeout;
-        if (timeout !== null && timeout !== undefined && typeof timeout !== 'number') {
+        if (timeout != undefined && typeof timeout !== 'number') {
           throw new Error('timeout must be of type number.');
         }
       }
@@ -1537,18 +1521,18 @@ export class Paging {
       httpRequest.headers.set("timeout", timeout.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1568,21 +1552,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1608,13 +1591,13 @@ export class Paging {
     let pagingGetOdataMultiplePagesOptions = (options && options.pagingGetOdataMultiplePagesOptions !== undefined) ? options.pagingGetOdataMultiplePagesOptions : undefined;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (clientRequestId !== null && clientRequestId !== undefined && typeof clientRequestId.valueOf() !== 'string') {
+      if (clientRequestId != undefined && typeof clientRequestId !== "string") {
         throw new Error('clientRequestId must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1626,14 +1609,14 @@ export class Paging {
       if (pagingGetOdataMultiplePagesOptions !== null && pagingGetOdataMultiplePagesOptions !== undefined)
       {
         maxresults = pagingGetOdataMultiplePagesOptions.maxresults;
-        if (maxresults !== null && maxresults !== undefined && typeof maxresults !== 'number') {
+        if (maxresults != undefined && typeof maxresults !== 'number') {
           throw new Error('maxresults must be of type number.');
         }
       }
       if (pagingGetOdataMultiplePagesOptions !== null && pagingGetOdataMultiplePagesOptions !== undefined)
       {
         timeout = pagingGetOdataMultiplePagesOptions.timeout;
-        if (timeout !== null && timeout !== undefined && typeof timeout !== 'number') {
+        if (timeout != undefined && typeof timeout !== 'number') {
           throw new Error('timeout must be of type number.');
         }
       }
@@ -1662,18 +1645,18 @@ export class Paging {
       httpRequest.headers.set("timeout", timeout.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1693,21 +1676,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.OdataProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1732,13 +1714,13 @@ export class Paging {
     let pagingGetMultiplePagesWithOffsetNextOptions = (options && options.pagingGetMultiplePagesWithOffsetNextOptions !== undefined) ? options.pagingGetMultiplePagesWithOffsetNextOptions : undefined;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (clientRequestId !== null && clientRequestId !== undefined && typeof clientRequestId.valueOf() !== 'string') {
+      if (clientRequestId != undefined && typeof clientRequestId !== "string") {
         throw new Error('clientRequestId must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1750,14 +1732,14 @@ export class Paging {
       if (pagingGetMultiplePagesWithOffsetNextOptions !== null && pagingGetMultiplePagesWithOffsetNextOptions !== undefined)
       {
         maxresults = pagingGetMultiplePagesWithOffsetNextOptions.maxresults;
-        if (maxresults !== null && maxresults !== undefined && typeof maxresults !== 'number') {
+        if (maxresults != undefined && typeof maxresults !== 'number') {
           throw new Error('maxresults must be of type number.');
         }
       }
       if (pagingGetMultiplePagesWithOffsetNextOptions !== null && pagingGetMultiplePagesWithOffsetNextOptions !== undefined)
       {
         timeout = pagingGetMultiplePagesWithOffsetNextOptions.timeout;
-        if (timeout !== null && timeout !== undefined && typeof timeout !== 'number') {
+        if (timeout != undefined && typeof timeout !== 'number') {
           throw new Error('timeout must be of type number.');
         }
       }
@@ -1786,18 +1768,18 @@ export class Paging {
       httpRequest.headers.set("timeout", timeout.toString());
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1817,21 +1799,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1854,10 +1835,10 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1876,18 +1857,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1907,21 +1888,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1945,10 +1925,10 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1967,18 +1947,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1998,21 +1978,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -2034,10 +2013,10 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -2056,18 +2035,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -2087,21 +2066,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -2123,10 +2101,10 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -2145,18 +2123,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -2176,21 +2154,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -2212,10 +2189,10 @@ export class Paging {
     let client = this.client;
     // Validate
     try {
-      if (nextPageLink === null || nextPageLink === undefined || typeof nextPageLink.valueOf() !== 'string') {
+      if (nextPageLink == undefined || typeof nextPageLink !== "string") {
         throw new Error('nextPageLink cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -2234,18 +2211,18 @@ export class Paging {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -2265,21 +2242,20 @@ export class Paging {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ProductResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

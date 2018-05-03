@@ -1,44 +1,35 @@
-﻿@using System.Linq;
-@inherits AutoRest.Core.Template<AutoRest.TypeScript.Model.MethodTS>
+﻿@inherits AutoRest.Core.Template<AutoRest.TypeScript.Model.MethodTS>
 // Send Request
-httpRequest.rawResponse = true;
-let operationRes: msRest.HttpOperationResponse;
-try {
-  operationRes = await client.pipeline(httpRequest);
-  let response = operationRes.response;
-  let statusCode = response.status;
-  @EmptyLine
-  if (@(Model.FailureStatusCodePredicate)) {
-    let error = new msRest.RestError(`Unexpected status code: ${statusCode}`);
-    error.statusCode = response.status;
-    error.request = msRest.stripRequest(httpRequest);
-    error.response = msRest.stripResponse(response);
-    let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-    try {
-      if (parsedErrorResponse) {
-        @(Model.PopulateErrorCodeAndMessage())
-      }
-  @if (Model.DefaultResponse.Body != null)
-  {
-      var deserializeErrorBody = Model.GetDeserializationString(Model.DefaultResponse.Body, "error.body", "parsedErrorResponse");
-      if (!string.IsNullOrWhiteSpace(deserializeErrorBody))
-      {
-@:      if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-@:        @(deserializeErrorBody)
-@:      }
-      }
-  }
-    } catch (defaultError) {
-      error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                       `- "${operationRes.bodyAsText}" for the default response.`;
-      return Promise.reject(error);
+const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
+const statusCode: number = httpResponse.statusCode;
+@EmptyLine
+if (@(Model.FailureStatusCodePredicate)) {
+  let errorMessage = `Unexpected status code: ${statusCode}`;
+  let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+  try {
+@if (Model.DefaultResponse.Body != null)
+{
+    var deserializeErrorBody = Model.GetDeserializationString(Model.DefaultResponse.Body, "deserializedBody", "deserializedBody");
+    if (!string.IsNullOrWhiteSpace(deserializeErrorBody))
+    {
+@:    if (deserializedBody != undefined) {
+@:      @(deserializeErrorBody)
+@:    }
     }
-    @EmptyLine
-    return Promise.reject(error);
-  }
-@EmptyLine
-} catch(error) {
-  return Promise.reject(error);
 }
-@EmptyLine
-return Promise.resolve(operationRes);
+  } catch (deserializationError) {
+    errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
+  }
+  const innerError: any = deserializedBody && deserializedBody.error || deserializedBody;
+  if (innerError && innerError.message) {
+    errorMessage = innerError.message;
+  }
+  throw new msRest.RestError(errorMessage, {
+    code: innerError.code,
+    statusCode: httpResponse.statusCode,
+    request: httpRequest,
+    response: httpResponse,
+    body: innerError
+  });
+}
+return httpResponse;

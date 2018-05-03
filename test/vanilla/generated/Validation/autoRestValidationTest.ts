@@ -13,9 +13,15 @@ import * as Models from "./models";
 import * as Mappers from "./models/mappers";
 
 class AutoRestValidationTest extends msRest.ServiceClient {
-  subscriptionId: string;
-  apiVersion: string;
-  baseUri: string;
+  /**
+   * Subscription ID.
+   */
+  public subscriptionId: string;
+  /**
+   * Required string following pattern \d{2}-\d{2}-\d{4}
+   */
+  public apiVersion: string;
+  public baseUri: string;
   serializer: msRest.Serializer;
 
   /**
@@ -49,16 +55,12 @@ class AutoRestValidationTest extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
+    this.baseUri = baseUri || "http://localhost:3000";
     this.subscriptionId = subscriptionId;
     this.apiVersion = apiVersion;
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     this.serializer = new msRest.Serializer(Mappers, false);
   }
   // methods on the client.
@@ -83,13 +85,13 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     let client = this;
     // Validate
     try {
-      if (this.subscriptionId === null || this.subscriptionId === undefined || typeof this.subscriptionId.valueOf() !== 'string') {
+      if (this.subscriptionId == undefined || typeof this.subscriptionId !== "string") {
         throw new Error('this.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (resourceGroupName !== null && resourceGroupName !== undefined) {
+      if (resourceGroupName != undefined) {
         if (resourceGroupName.length > 10)
         {
           throw new Error('"resourceGroupName" should satisfy the constraint - "MaxLength": 10');
@@ -103,10 +105,10 @@ class AutoRestValidationTest extends msRest.ServiceClient {
           throw new Error('"resourceGroupName" should satisfy the constraint - "Pattern": /[a-zA-Z0-9]+/');
         }
       }
-      if (id === null || id === undefined || typeof id !== 'number') {
+      if (id == undefined || typeof id !== 'number') {
         throw new Error('id cannot be null or undefined and it must be of type number.');
       }
-      if (id !== null && id !== undefined) {
+      if (id != undefined) {
         if (id > 1000)
         {
           throw new Error('"id" should satisfy the constraint - "InclusiveMaximum": 1000');
@@ -120,10 +122,10 @@ class AutoRestValidationTest extends msRest.ServiceClient {
           throw new Error('"id" should satisfy the constraint - "MultipleOf": 10');
         }
       }
-      if (this.apiVersion === null || this.apiVersion === undefined || typeof this.apiVersion.valueOf() !== 'string') {
+      if (this.apiVersion == undefined || typeof this.apiVersion !== "string") {
         throw new Error('this.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.apiVersion !== null && this.apiVersion !== undefined) {
+      if (this.apiVersion != undefined) {
         if (this.apiVersion.match(/\d{2}-\d{2}-\d{4}/) === null)
         {
           throw new Error('"this.apiVersion" should satisfy the constraint - "Pattern": /\d{2}-\d{2}-\d{4}/');
@@ -150,18 +152,18 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -181,21 +183,20 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.Product;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
   // methods on the client.
@@ -222,13 +223,13 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     let body = (options && options.body !== undefined) ? options.body : undefined;
     // Validate
     try {
-      if (this.subscriptionId === null || this.subscriptionId === undefined || typeof this.subscriptionId.valueOf() !== 'string') {
+      if (this.subscriptionId == undefined || typeof this.subscriptionId !== "string") {
         throw new Error('this.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (resourceGroupName !== null && resourceGroupName !== undefined) {
+      if (resourceGroupName != undefined) {
         if (resourceGroupName.length > 10)
         {
           throw new Error('"resourceGroupName" should satisfy the constraint - "MaxLength": 10');
@@ -242,10 +243,10 @@ class AutoRestValidationTest extends msRest.ServiceClient {
           throw new Error('"resourceGroupName" should satisfy the constraint - "Pattern": /[a-zA-Z0-9]+/');
         }
       }
-      if (id === null || id === undefined || typeof id !== 'number') {
+      if (id == undefined || typeof id !== 'number') {
         throw new Error('id cannot be null or undefined and it must be of type number.');
       }
-      if (id !== null && id !== undefined) {
+      if (id != undefined) {
         if (id > 1000)
         {
           throw new Error('"id" should satisfy the constraint - "InclusiveMaximum": 1000');
@@ -259,10 +260,10 @@ class AutoRestValidationTest extends msRest.ServiceClient {
           throw new Error('"id" should satisfy the constraint - "MultipleOf": 10');
         }
       }
-      if (this.apiVersion === null || this.apiVersion === undefined || typeof this.apiVersion.valueOf() !== 'string') {
+      if (this.apiVersion == undefined || typeof this.apiVersion !== "string") {
         throw new Error('this.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.apiVersion !== null && this.apiVersion !== undefined) {
+      if (this.apiVersion != undefined) {
         if (this.apiVersion.match(/\d{2}-\d{2}-\d{4}/) === null)
         {
           throw new Error('"this.apiVersion" should satisfy the constraint - "Pattern": /\d{2}-\d{2}-\d{4}/');
@@ -289,9 +290,9 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -311,11 +312,11 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -335,21 +336,20 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.Product;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
   // methods on the client.
@@ -377,18 +377,18 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
       } catch (deserializationError) {
@@ -403,7 +403,6 @@ class AutoRestValidationTest extends msRest.ServiceClient {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
   // methods on the client.
@@ -433,9 +432,9 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -455,11 +454,11 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
       } catch (deserializationError) {
@@ -475,21 +474,20 @@ class AutoRestValidationTest extends msRest.ServiceClient {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.Product;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

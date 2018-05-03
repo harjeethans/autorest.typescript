@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { StorageManagementClient } from "../storageManagementClient";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a StorageAccounts. */
 export class StorageAccounts {
   private readonly client: StorageManagementClient;
@@ -49,13 +47,13 @@ export class StorageAccounts {
       if (accountName === null || accountName === undefined) {
         throw new Error('accountName cannot be null or undefined.');
       }
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -80,9 +78,9 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -102,11 +100,11 @@ export class StorageAccounts {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -126,21 +124,20 @@ export class StorageAccounts {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.CheckNameAvailabilityResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -170,38 +167,28 @@ export class StorageAccounts {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async createWithHttpOperationResponse(resourceGroupName: string, accountName: string, parameters: Models.StorageAccountCreateParameters, options?: msRest.RequestOptionsBase): Promise<msRest.HttpOperationResponse> {
+  async createWithHttpOperationResponse(resourceGroupName: string, accountName: string, parameters: Models.StorageAccountCreateParameters, options?: msRest.RequestOptionsBase): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Send request
-    let initialResult: msRest.HttpOperationResponse;
-    try {
-      initialResult = await this.beginCreateWithHttpOperationResponse(resourceGroupName, accountName, parameters, options);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.getLongRunningOperationResult(initialResult, options);
-      let httpRequest = operationRes.request;
-      let response = operationRes.response;
+    const initialResult: msRest.HttpResponse = await this.beginCreateWithHttpOperationResponse(resourceGroupName, accountName, parameters, options);
+    const httpResponse: msRest.HttpResponse = await client.getLongRunningOperationResult(initialResult);
+    const httpRequest = httpResponse.request;
 
-      // Deserialize Response
-      try {
-        if (deserializedBody != undefined) {
-          const resultMapper = Mappers.StorageAccount;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'operationRes.parsedBody');
-        }
-      } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
-          request: httpRequest,
-          response: httpResponse
-        });
+    // Deserialize Response
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.StorageAccount;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
-  } catch (err) {
-      return Promise.reject(err);
+    } catch (error) {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
+        request: httpRequest,
+        response: httpResponse
+      });
     }
-    return Promise.resolve(operationRes);
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
+    return httpResponse;
   }
 
   /**
@@ -226,19 +213,19 @@ export class StorageAccounts {
     let client = this.client;
     // Validate
     try {
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (accountName === null || accountName === undefined || typeof accountName.valueOf() !== 'string') {
+      if (accountName == undefined || typeof accountName !== "string") {
         throw new Error('accountName cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -265,18 +252,18 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200 && statusCode !== 204) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -295,7 +282,6 @@ export class StorageAccounts {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -323,19 +309,19 @@ export class StorageAccounts {
     let client = this.client;
     // Validate
     try {
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (accountName === null || accountName === undefined || typeof accountName.valueOf() !== 'string') {
+      if (accountName == undefined || typeof accountName !== "string") {
         throw new Error('accountName cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -362,18 +348,18 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -393,21 +379,20 @@ export class StorageAccounts {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.StorageAccount;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -445,22 +430,22 @@ export class StorageAccounts {
     let client = this.client;
     // Validate
     try {
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (accountName === null || accountName === undefined || typeof accountName.valueOf() !== 'string') {
+      if (accountName == undefined || typeof accountName !== "string") {
         throw new Error('accountName cannot be null or undefined and it must be of type string.');
       }
-      if (parameters === null || parameters === undefined) {
+      if (parameters == undefined) {
         throw new Error('parameters cannot be null or undefined.');
       }
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -487,9 +472,9 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -509,11 +494,11 @@ export class StorageAccounts {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -533,21 +518,20 @@ export class StorageAccounts {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.StorageAccount;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -571,19 +555,19 @@ export class StorageAccounts {
     let client = this.client;
     // Validate
     try {
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (accountName === null || accountName === undefined || typeof accountName.valueOf() !== 'string') {
+      if (accountName == undefined || typeof accountName !== "string") {
         throw new Error('accountName cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -610,18 +594,18 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -641,21 +625,20 @@ export class StorageAccounts {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.StorageAccountKeys;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -675,13 +658,13 @@ export class StorageAccounts {
     let client = this.client;
     // Validate
     try {
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -706,18 +689,18 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -737,21 +720,20 @@ export class StorageAccounts {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.StorageAccountListResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -775,16 +757,16 @@ export class StorageAccounts {
     let client = this.client;
     // Validate
     try {
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -810,18 +792,18 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -841,21 +823,20 @@ export class StorageAccounts {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.StorageAccountListResult;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -883,16 +864,16 @@ export class StorageAccounts {
     let keyName = (options && options.keyName !== undefined) ? options.keyName : undefined;
     // Validate
     try {
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (accountName === null || accountName === undefined || typeof accountName.valueOf() !== 'string') {
+      if (accountName == undefined || typeof accountName !== "string") {
         throw new Error('accountName cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
       if (keyName) {
@@ -901,7 +882,7 @@ export class StorageAccounts {
           throw new Error(keyName + ' is not a valid value. The valid values are: ' + allowedValues);
         }
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -933,9 +914,9 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -955,11 +936,11 @@ export class StorageAccounts {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -979,21 +960,20 @@ export class StorageAccounts {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.StorageAccountKeys;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -1026,22 +1006,22 @@ export class StorageAccounts {
     let client = this.client;
     // Validate
     try {
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (accountName === null || accountName === undefined || typeof accountName.valueOf() !== 'string') {
+      if (accountName == undefined || typeof accountName !== "string") {
         throw new Error('accountName cannot be null or undefined and it must be of type string.');
       }
       if (parameters === null || parameters === undefined) {
         throw new Error('parameters cannot be null or undefined.');
       }
-      if (this.client.apiVersion === null || this.client.apiVersion === undefined || typeof this.client.apiVersion.valueOf() !== 'string') {
+      if (this.client.apiVersion == undefined || typeof this.client.apiVersion !== "string") {
         throw new Error('this.client.apiVersion cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.subscriptionId === null || this.client.subscriptionId === undefined || typeof this.client.subscriptionId.valueOf() !== 'string') {
+      if (this.client.subscriptionId == undefined || typeof this.client.subscriptionId !== "string") {
         throw new Error('this.client.subscriptionId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -1068,9 +1048,9 @@ export class StorageAccounts {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -1090,11 +1070,11 @@ export class StorageAccounts {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200 && statusCode !== 202) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -1114,21 +1094,20 @@ export class StorageAccounts {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.StorageAccount;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

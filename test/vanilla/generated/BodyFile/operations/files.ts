@@ -12,8 +12,6 @@ import * as msRest from "ms-rest-js";
 import * as Mappers from "../models/mappers";
 import { AutoRestSwaggerBATFileService } from "../autoRestSwaggerBATFileService";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a Files. */
 export class Files {
   private readonly client: AutoRestSwaggerBATFileService;
@@ -48,51 +46,40 @@ export class Files {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    httpRequest.rawResponse = true;
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
 
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(`Unexpected status code: ${statusCode}`);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            const resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    if (statusCode !== 200) {
+      let errorMessage = `Unexpected status code: ${statusCode}`;
+      let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(error) {
-      return Promise.reject(error);
+      const innerError: any = deserializedBody && deserializedBody.error || deserializedBody;
+      if (innerError && innerError.message) {
+        errorMessage = innerError.message;
+      }
+      throw new msRest.RestError(errorMessage, {
+        code: innerError.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: innerError
+      });
     }
-
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -118,51 +105,40 @@ export class Files {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    httpRequest.rawResponse = true;
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
 
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(`Unexpected status code: ${statusCode}`);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            const resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    if (statusCode !== 200) {
+      let errorMessage = `Unexpected status code: ${statusCode}`;
+      let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(error) {
-      return Promise.reject(error);
+      const innerError: any = deserializedBody && deserializedBody.error || deserializedBody;
+      if (innerError && innerError.message) {
+        errorMessage = innerError.message;
+      }
+      throw new msRest.RestError(errorMessage, {
+        code: innerError.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: innerError
+      });
     }
-
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -188,51 +164,40 @@ export class Files {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    httpRequest.rawResponse = true;
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
 
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(`Unexpected status code: ${statusCode}`);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            const resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    if (statusCode !== 200) {
+      let errorMessage = `Unexpected status code: ${statusCode}`;
+      let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(error) {
-      return Promise.reject(error);
+      const innerError: any = deserializedBody && deserializedBody.error || deserializedBody;
+      if (innerError && innerError.message) {
+        errorMessage = innerError.message;
+      }
+      throw new msRest.RestError(errorMessage, {
+        code: innerError.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: innerError
+      });
     }
-
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -246,22 +211,22 @@ export class Files {
    *
    *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
    *
-   *                      {Response} [result]   - The deserialized result object if an error did not occur.
+   *                      {ReadableStream | NodeJS.ReadableStream | null} [result]   - The deserialized result object if an error did not occur.
    *
    *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
    *
    *                      {Response} [response] - The HTTP Response stream if an error did not occur.
    */
-  getFile(): Promise<Response>;
-  getFile(options: msRest.RequestOptionsBase): Promise<Response>;
-  getFile(callback: msRest.ServiceCallback<Response>): void;
-  getFile(options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Response>): void;
-  getFile(options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Response>): any {
+  getFile(): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  getFile(options: msRest.RequestOptionsBase): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  getFile(callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  getFile(options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  getFile(options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): any {
     if (!callback && typeof options === 'function') {
       callback = options;
       options = undefined;
     }
-    const cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>;
     if (!callback) {
       return this.getFileWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
         return Promise.resolve(httpResponse.readableStreamBody);
@@ -292,22 +257,22 @@ export class Files {
    *
    *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
    *
-   *                      {Response} [result]   - The deserialized result object if an error did not occur.
+   *                      {ReadableStream | NodeJS.ReadableStream | null} [result]   - The deserialized result object if an error did not occur.
    *
    *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
    *
    *                      {Response} [response] - The HTTP Response stream if an error did not occur.
    */
-  getFileLarge(): Promise<Response>;
-  getFileLarge(options: msRest.RequestOptionsBase): Promise<Response>;
-  getFileLarge(callback: msRest.ServiceCallback<Response>): void;
-  getFileLarge(options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Response>): void;
-  getFileLarge(options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Response>): any {
+  getFileLarge(): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  getFileLarge(options: msRest.RequestOptionsBase): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  getFileLarge(callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  getFileLarge(options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  getFileLarge(options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): any {
     if (!callback && typeof options === 'function') {
       callback = options;
       options = undefined;
     }
-    const cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>;
     if (!callback) {
       return this.getFileLargeWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
         return Promise.resolve(httpResponse.readableStreamBody);
@@ -338,22 +303,22 @@ export class Files {
    *
    *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
    *
-   *                      {Response} [result]   - The deserialized result object if an error did not occur.
+   *                      {ReadableStream | NodeJS.ReadableStream | null} [result]   - The deserialized result object if an error did not occur.
    *
    *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
    *
    *                      {Response} [response] - The HTTP Response stream if an error did not occur.
    */
-  getEmptyFile(): Promise<Response>;
-  getEmptyFile(options: msRest.RequestOptionsBase): Promise<Response>;
-  getEmptyFile(callback: msRest.ServiceCallback<Response>): void;
-  getEmptyFile(options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Response>): void;
-  getEmptyFile(options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Response>): any {
+  getEmptyFile(): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  getEmptyFile(options: msRest.RequestOptionsBase): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  getEmptyFile(callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  getEmptyFile(options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  getEmptyFile(options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): any {
     if (!callback && typeof options === 'function') {
       callback = options;
       options = undefined;
     }
-    const cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>;
     if (!callback) {
       return this.getEmptyFileWithHttpOperationResponse(options).then((httpResponse: msRest.HttpResponse) => {
         return Promise.resolve(httpResponse.readableStreamBody);

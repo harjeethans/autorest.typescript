@@ -163,22 +163,22 @@ namespace AutoRest.TypeScript
             {
                 if (isRequired)
                 {
-                    builder.AppendLine("if ({0} === null || {0} === undefined || typeof {0} !== '{1}') {{", valueReference, lowercaseTypeName);
+                    builder.AppendLine("if ({0} == undefined || typeof {0} !== '{1}') {{", valueReference, lowercaseTypeName);
                     return ConstructValidationCheck(builder, requiredTypeErrorMessage, valueReference, primary.Name).ToString();
                 }
 
-                builder.AppendLine("if ({0} !== null && {0} !== undefined && typeof {0} !== '{1}') {{", valueReference, lowercaseTypeName);
+                builder.AppendLine("if ({0} != undefined && typeof {0} !== '{1}') {{", valueReference, lowercaseTypeName);
                 return ConstructValidationCheck(builder, typeErrorMessage, valueReference, primary.Name).ToString();
             }
             else if (primary.KnownPrimaryType == KnownPrimaryType.Stream)
             {
                 if (isRequired)
                 {
-                    builder.AppendLine("if ({0} === null || {0} === undefined) {{", valueReference, lowercaseTypeName);
+                    builder.AppendLine("if ({0} == undefined) {{", valueReference, lowercaseTypeName);
                     return ConstructValidationCheck(builder, requiredTypeErrorMessage, valueReference, primary.Name).ToString();
                 }
 
-                builder.AppendLine("if ({0} !== null && {0} !== undefined && msRest.isStream({0})) {{", valueReference);
+                builder.AppendLine("if ({0} != undefined && msRest.isStream({0})) {{", valueReference);
                 return ConstructValidationCheck(builder, typeErrorMessage, valueReference, primary.Name).ToString();
             }
             else if (primary.KnownPrimaryType == KnownPrimaryType.String)
@@ -186,11 +186,11 @@ namespace AutoRest.TypeScript
                 if (isRequired)
                 {
                     //empty string can be a valid value hence we cannot implement the simple check if (!{0})
-                    builder.AppendLine("if ({0} === null || {0} === undefined || typeof {0}.valueOf() !== '{1}') {{", valueReference, lowercaseTypeName);
+                    builder.AppendLine("if ({0} == undefined || typeof {0} !== \"{1}\") {{", valueReference, lowercaseTypeName);
                     return ConstructValidationCheck(builder, requiredTypeErrorMessage, valueReference, primary.Name).ToString();
                 }
 
-                builder.AppendLine("if ({0} !== null && {0} !== undefined && typeof {0}.valueOf() !== '{1}') {{", valueReference, lowercaseTypeName);
+                builder.AppendLine("if ({0} != undefined && typeof {0} !== \"{1}\") {{", valueReference, lowercaseTypeName);
                 return ConstructValidationCheck(builder, typeErrorMessage, valueReference, primary.Name).ToString();
             }
             else if (primary.KnownPrimaryType == KnownPrimaryType.Uuid)

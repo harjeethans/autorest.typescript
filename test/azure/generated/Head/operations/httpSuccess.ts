@@ -12,8 +12,6 @@ import * as msRest from "ms-rest-js";
 import * as Mappers from "../models/mappers";
 import { AutoRestHeadTestService } from "../autoRestHeadTestService";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a HttpSuccess. */
 export class HttpSuccess {
   private readonly client: AutoRestHeadTestService;
@@ -40,7 +38,7 @@ export class HttpSuccess {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -63,18 +61,18 @@ export class HttpSuccess {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200 && statusCode !== 404) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -92,10 +90,7 @@ export class HttpSuccess {
         body: deserializedBody
       });
     }
-    httpResponse.deserializedBody = () => (statusCode === 200);
-    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
-    return httpResponse;
+    httpResponse.deserializedBody = () => Promise.resolve(statusCode === 200);return httpResponse;
   }
 
   /**
@@ -113,7 +108,7 @@ export class HttpSuccess {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -136,18 +131,18 @@ export class HttpSuccess {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 204 && statusCode !== 404) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -165,10 +160,7 @@ export class HttpSuccess {
         body: deserializedBody
       });
     }
-    httpResponse.deserializedBody = () => (statusCode === 204);
-    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
-    return httpResponse;
+    httpResponse.deserializedBody = () => Promise.resolve(statusCode === 204);return httpResponse;
   }
 
   /**
@@ -186,7 +178,7 @@ export class HttpSuccess {
     let client = this.client;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -209,18 +201,18 @@ export class HttpSuccess {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 204 && statusCode !== 404) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -238,10 +230,7 @@ export class HttpSuccess {
         body: deserializedBody
       });
     }
-    httpResponse.deserializedBody = () => (statusCode === 204);
-    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
-    return httpResponse;
+    httpResponse.deserializedBody = () => Promise.resolve(statusCode === 204);return httpResponse;
   }
 
   /**

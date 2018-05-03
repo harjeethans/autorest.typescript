@@ -14,7 +14,7 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestSwaggerBATXMLService extends msRest.ServiceClient {
-  baseUri: string;
+  public baseUri: string;
 
   // Operation groups
   xml: operations.Xml;
@@ -41,14 +41,10 @@ class AutoRestSwaggerBATXMLService extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost';
-    }
+    this.baseUri = baseUri || "http://localhost";
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     this.xml = new operations.Xml(this);
     this.serializer = new msRest.Serializer(Mappers, true);
   }

@@ -417,6 +417,20 @@ namespace AutoRest.TypeScript.DSL
             return new TSIfBlock(this);
         }
 
+        public TSTryBlock Try(Action<TSBlock> tryAction)
+        {
+            Line($"try {{");
+            Indent(() =>
+            {
+                using (TSBlock block = new TSBlock(this))
+                {
+                    tryAction.Invoke(block);
+                }
+            });
+            Text($"}}");
+            return new TSTryBlock(this);
+        }
+
         public void Return(Action<TSValue> returnValueAction)
         {
             Text("return ");

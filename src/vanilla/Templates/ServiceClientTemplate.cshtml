@@ -1,7 +1,7 @@
 ﻿@using System.Linq
 @using AutoRest.Core.Model
 @using AutoRest.Core.Utilities
-@using AutoRest.TypeScript
+@using AutoRest.TypeScript.Generators
 @using AutoRest.TypeScript.vanilla.Templates
 @inherits AutoRest.Core.Template<AutoRest.TypeScript.Model.CodeModelTS>
 /*
@@ -23,18 +23,7 @@ import * as Mappers from "./models/mappers";
 @{var requiredParameters = Model.Properties.Where(p => p.IsRequired && !p.IsConstant && string.IsNullOrEmpty(p.DefaultValue));}
 @{var optionalParameters = Model.Properties.Where(p => (!p.IsRequired || p.IsRequired && !string.IsNullOrEmpty(p.DefaultValue)) && !p.IsConstant);}
 class @(Model.Name) extends msRest.ServiceClient {
-@foreach (var property in Model.Properties)
-{
-    if (property.IsRequired)
-    {
-  @:@(property.Name): @property.ModelType.TSType(false);
-    }
-    else
-    {
-  @:@(property.Name)?: @property.ModelType.TSType(false);
-    }
-}
-  baseUri: string;
+  @(ServiceClientGenerator.ClassProperties(Model, ServiceClientGenerator.ServiceClientPropertiesToIgnore))
 @if (Model.MethodGroupModels.Any())
 {
   @EmptyLine
@@ -76,8 +65,7 @@ foreach (var methodGroup in Model.MethodGroupModels)
    @:*
 }
    */
-@{ var clientOptionType = Model.OptionalParameterTypeForClientConstructor == "ServiceClientOptions" ? "msRest.ServiceClientOptions" : Model.OptionalParameterTypeForClientConstructor;}
-  constructor(@(!string.IsNullOrEmpty(Model.RequiredConstructorParametersTS) ? Model.RequiredConstructorParametersTS + ", ": "")options?: @clientOptionType) {
+  constructor(@(ServiceClientGenerator.ServiceClientConstructorParameterList(Model))) {
 @foreach (var param in requiredParameters)
 {
   @:  if (@(param.Name) === null || @(param.Name) === undefined) {
@@ -87,38 +75,10 @@ foreach (var methodGroup in Model.MethodGroupModels)
 @EmptyLine
     if (!options) options = {};
 @EmptyLine
-    super(@(requiredParameters.Any(p => p.ModelType.IsPrimaryType(KnownPrimaryType.Credentials)) ? "credentials" : "undefined"), options);
+    super(options);
     @EmptyLine
-@foreach (var property in Model.Properties.Where(p => p.DefaultValue != null))
-{
-    @:this.@(property.Name) = @(property.DefaultValue);
-}
-
-@if(!Model.IsCustomBaseUri)
-{
-    @:this.baseUri = baseUri as string;
-
-    @:if (!this.baseUri) {
-      @:this.baseUri = '@Model.BaseUrl';
-    @:}
-}
-else
-{
-    @:this.baseUri = '@Model.BaseUrl';
-}
-
-@foreach (var param in requiredParameters)
-{
-  @:  this.@(param.Name) = @(param.Name);
-}
-  @EmptyLine
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
-  @foreach (var property in optionalParameters)
-  {
-    @:if(options.@(property.Name) !== null && options.@(property.Name) !== undefined) {
-    @:  this.@(property.Name) = options.@(property.Name);
-    @:}
-  }
+    @(ServiceClientGenerator.ServiceClientConstructorPropertyInitialization(Model, ServiceClientGenerator.ServiceClientPropertiesToIgnore))
+    @EmptyLine
 
   @foreach (var methodGroup in Model.MethodGroupModels)
   {

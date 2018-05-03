@@ -15,17 +15,11 @@ import * as msRestAzure from "ms-rest-azure-js";
 import * as operations from "./operations";
 
 class AutoRestParameterizedHostTestClient extends msRestAzure.AzureServiceClient {
-
-  credentials: msRest.ServiceClientCredentials;
-
-  host: string;
-
-  acceptLanguage: string;
-
-  longRunningOperationRetryTimeout: number;
-
-  generateClientRequestId: boolean;
-  baseUri: string;
+  /**
+   * A string value that is used as a global part of the parameterized host
+   */
+  public host?: string;
+  public baseUri: string;
 
   // Operation groups
   paths: operations.Paths;
@@ -57,40 +51,18 @@ class AutoRestParameterizedHostTestClient extends msRestAzure.AzureServiceClient
    *
    */
   constructor(credentials: msRest.ServiceClientCredentials, subscriptionId: string, options?: Models.AutoRestParameterizedHostTestClientOptions) {
-    if (credentials === null || credentials === undefined) {
-      throw new Error('\'credentials\' cannot be null.');
-    }
+  if (credentials === null || credentials === undefined) {
+    throw new Error('\'credentials\' cannot be null.');
+  }
 
-    if (!options) options = {};
-
-    super(credentials, subscriptionId, {
-      acceptLanguage: options.acceptLanguage,
-      generateClientRequestId: options.generateClientRequestId,
-      longRunningOperationRetryTimeoutInSeconds: options.longRunningOperationRetryTimeoutInSeconds,
-      rpRegistrationRetryTimeoutInSeconds: options.rpRegistrationRetryTimeoutInSeconds,
-      noRetryPolicy: options.noRetryPolicy,
-      nodeJsUserAgentPackage: options.nodeJsUserAgentPackage || "/$"
-    });
+    super(credentials, subscriptionId, options);
 
     this.host = 'host';
-    this.acceptLanguage = 'en-US';
-    this.longRunningOperationRetryTimeout = 30;
-    this.generateClientRequestId = true;
-    this.baseUri = 'http://{accountName}{host}';
-    this.credentials = credentials;
-
-    if(options.host !== null && options.host !== undefined) {
+    this.baseUri = "http://{accountName}{host}";
+    if (options.host != undefined) {
       this.host = options.host;
     }
-    if(options.acceptLanguage !== null && options.acceptLanguage !== undefined) {
-      this.acceptLanguage = options.acceptLanguage;
-    }
-    if(options.longRunningOperationRetryTimeout !== null && options.longRunningOperationRetryTimeout !== undefined) {
-      this.longRunningOperationRetryTimeout = options.longRunningOperationRetryTimeout;
-    }
-    if(options.generateClientRequestId !== null && options.generateClientRequestId !== undefined) {
-      this.generateClientRequestId = options.generateClientRequestId;
-    }
+
     this.paths = new operations.Paths(this);
     this.serializer = new msRest.Serializer(Mappers);
   }

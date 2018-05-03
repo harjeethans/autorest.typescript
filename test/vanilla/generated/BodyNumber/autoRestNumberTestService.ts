@@ -14,7 +14,7 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestNumberTestService extends msRest.ServiceClient {
-  baseUri: string;
+  public baseUri: string;
 
   // Operation groups
   number: operations.Number;
@@ -41,14 +41,10 @@ class AutoRestNumberTestService extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
+    this.baseUri = baseUri || "http://localhost:3000";
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     this.number = new operations.Number(this);
     this.serializer = new msRest.Serializer(Mappers, false);
   }

@@ -78,9 +78,9 @@ async @(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParamet
   @:}
   }
   if(options && options.customHeaders) {
-    for(let headerName in options.customHeaders) {
+    for(const headerName in options.customHeaders) {
       if (options.customHeaders.hasOwnProperty(headerName)) {
-        httpRequest.headers[headerName] = options.customHeaders[headerName];
+        httpRequest.headers.set(headerName, options.customHeaders[headerName]);
       }
     }
   }
@@ -150,7 +150,7 @@ async @(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParamet
           }
   @:}
       }
-  httpRequest.formData = formData;
+  httpRequest.updateFromFormData(formData);
   </text>
   }
 

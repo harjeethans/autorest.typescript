@@ -14,15 +14,7 @@ import * as msRest from "ms-rest-js";
 import * as msRestAzure from "ms-rest-azure-js";
 
 class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClient {
-
-  credentials: msRest.ServiceClientCredentials;
-
-  acceptLanguage: string;
-
-  longRunningOperationRetryTimeout: number;
-
-  generateClientRequestId: boolean;
-  baseUri: string;
+  public baseUri: string;
   serializer: msRest.Serializer;
 
   /**
@@ -51,39 +43,14 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
    *
    */
   constructor(credentials: msRest.ServiceClientCredentials, subscriptionId: string, baseUri?: string, options?: Models.AutoRestResourceFlatteningTestServiceOptions) {
-    if (credentials === null || credentials === undefined) {
-      throw new Error('\'credentials\' cannot be null.');
-    }
+  if (credentials === null || credentials === undefined) {
+    throw new Error('\'credentials\' cannot be null.');
+  }
 
-    if (!options) options = {};
+    super(credentials, subscriptionId, options);
 
-    super(credentials, subscriptionId, {
-      acceptLanguage: options.acceptLanguage,
-      generateClientRequestId: options.generateClientRequestId,
-      longRunningOperationRetryTimeoutInSeconds: options.longRunningOperationRetryTimeoutInSeconds,
-      rpRegistrationRetryTimeoutInSeconds: options.rpRegistrationRetryTimeoutInSeconds,
-      noRetryPolicy: options.noRetryPolicy,
-      nodeJsUserAgentPackage: options.nodeJsUserAgentPackage || "/$"
-    });
+    this.baseUri = baseUri || "http://localhost:3000";
 
-    this.acceptLanguage = 'en-US';
-    this.longRunningOperationRetryTimeout = 30;
-    this.generateClientRequestId = true;
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
-    this.credentials = credentials;
-
-    if(options.acceptLanguage !== null && options.acceptLanguage !== undefined) {
-      this.acceptLanguage = options.acceptLanguage;
-    }
-    if(options.longRunningOperationRetryTimeout !== null && options.longRunningOperationRetryTimeout !== undefined) {
-      this.longRunningOperationRetryTimeout = options.longRunningOperationRetryTimeout;
-    }
-    if(options.generateClientRequestId !== null && options.generateClientRequestId !== undefined) {
-      this.generateClientRequestId = options.generateClientRequestId;
-    }
     this.serializer = new msRest.Serializer(Mappers);
   }
   // methods on the client.
@@ -105,7 +72,7 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     let resourceArray = (options && options.resourceArray !== undefined) ? options.resourceArray : undefined;
     // Validate
     try {
-      if (this.acceptLanguage !== null && this.acceptLanguage !== undefined && typeof this.acceptLanguage.valueOf() !== 'string') {
+      if (this.acceptLanguage != undefined && typeof this.acceptLanguage !== "string") {
         throw new Error('this.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -128,9 +95,9 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       httpRequest.headers.set("accept-language", this.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -164,11 +131,11 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -187,7 +154,6 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
   // methods on the client.
@@ -207,7 +173,7 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     let client = this;
     // Validate
     try {
-      if (this.acceptLanguage !== null && this.acceptLanguage !== undefined && typeof this.acceptLanguage.valueOf() !== 'string') {
+      if (this.acceptLanguage != undefined && typeof this.acceptLanguage !== "string") {
         throw new Error('this.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -230,18 +196,18 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       httpRequest.headers.set("accept-language", this.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -261,6 +227,7 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = {
@@ -281,15 +248,13 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
   // methods on the client.
@@ -311,7 +276,7 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     let resourceDictionary = (options && options.resourceDictionary !== undefined) ? options.resourceDictionary : undefined;
     // Validate
     try {
-      if (this.acceptLanguage !== null && this.acceptLanguage !== undefined && typeof this.acceptLanguage.valueOf() !== 'string') {
+      if (this.acceptLanguage != undefined && typeof this.acceptLanguage !== "string") {
         throw new Error('this.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -334,9 +299,9 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       httpRequest.headers.set("accept-language", this.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -370,11 +335,11 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -393,7 +358,6 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
   // methods on the client.
@@ -413,7 +377,7 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     let client = this;
     // Validate
     try {
-      if (this.acceptLanguage !== null && this.acceptLanguage !== undefined && typeof this.acceptLanguage.valueOf() !== 'string') {
+      if (this.acceptLanguage != undefined && typeof this.acceptLanguage !== "string") {
         throw new Error('this.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -436,18 +400,18 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       httpRequest.headers.set("accept-language", this.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -467,6 +431,7 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = {
@@ -487,15 +452,13 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
   // methods on the client.
@@ -518,7 +481,7 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     let resourceComplexObject = (options && options.resourceComplexObject !== undefined) ? options.resourceComplexObject : undefined;
     // Validate
     try {
-      if (this.acceptLanguage !== null && this.acceptLanguage !== undefined && typeof this.acceptLanguage.valueOf() !== 'string') {
+      if (this.acceptLanguage != undefined && typeof this.acceptLanguage !== "string") {
         throw new Error('this.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -541,9 +504,9 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       httpRequest.headers.set("accept-language", this.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -563,11 +526,11 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -586,7 +549,6 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
   // methods on the client.
@@ -606,7 +568,7 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     let client = this;
     // Validate
     try {
-      if (this.acceptLanguage !== null && this.acceptLanguage !== undefined && typeof this.acceptLanguage.valueOf() !== 'string') {
+      if (this.acceptLanguage != undefined && typeof this.acceptLanguage !== "string") {
         throw new Error('this.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -629,18 +591,18 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
       httpRequest.headers.set("accept-language", this.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -660,21 +622,20 @@ class AutoRestResourceFlatteningTestService extends msRestAzure.AzureServiceClie
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.ResourceCollection;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

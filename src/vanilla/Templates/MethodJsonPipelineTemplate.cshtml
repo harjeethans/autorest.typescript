@@ -2,11 +2,11 @@
 @using AutoRest.TypeScript.Model
 @inherits AutoRest.Core.Template<AutoRest.TypeScript.Model.MethodTS>
 // Send Request
-let httpResponse: msRest.HttpResponse;
-httpResponse = await client.sendRequest(httpRequest);
+const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
 const statusCode: number = httpResponse.statusCode;
-let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+let deserializedBody: { [key: string]: any } | undefined;
 if (@(Model.FailureStatusCodePredicate)) {
+  deserializedBody = await httpResponse.deserializedBody();
   let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
   try {
 @if (Model.DefaultResponse.Body != null)
@@ -30,20 +30,27 @@ if (@(Model.FailureStatusCodePredicate)) {
     body: deserializedBody
   });
 }
+@if (Model.HttpMethod == AutoRest.Core.Model.HttpMethod.Head)
+{
 @Model.InitializeResult
+}
+else
+{
 @foreach (var responsePair in Model.Responses.Where(r => r.Value.Body != null))
 {
     <text>
 // Deserialize Response
 if (statusCode === @MethodTS.GetStatusCodeReference(responsePair.Key)) {
+  deserializedBody = await httpResponse.deserializedBody();
   @(Model.DeserializeResponse(responsePair.Value.Body, "deserializedBody"))
 }
     </text>
 }
 @if (Model.ReturnType.Body != null && Model.DefaultResponse.Body != null && !Model.Responses.Any())
 {
-  @(Model.DeserializeResponse(Model.DefaultResponse.Body, "deserializedBody"))
+@:deserializedBody = await httpResponse.deserializedBody();
+@(Model.DeserializeResponse(Model.DefaultResponse.Body, "deserializedBody"))
 }
-httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-@EmptyLine
+@:httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
+}
 return httpResponse;

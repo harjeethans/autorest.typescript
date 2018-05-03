@@ -13,19 +13,22 @@ namespace AutoRest.TypeScript.Generators
 {
     public static class ServiceClientGenerator
     {
-        public static string ClassProperties(CodeModelTS serviceClient)
+        public static readonly ISet<string> ServiceClientPropertiesToIgnore = new HashSet<string>()
+        {
+            "acceptLanguage",
+            "credentials",
+            "generateClientRequestId",
+            "longRunningOperationRetryTimeout",
+        };
+        public static readonly ISet<string> AzureServiceClientPropertiesToIgnore = new HashSet<string>(ServiceClientPropertiesToIgnore)
+        {
+            "subscriptionId",
+        };
+
+        public static string ClassProperties(CodeModelTS serviceClient, ISet<string> propertiesToIgnore)
         {
             TSBuilder builder = new TSBuilder();
             TSClass serviceClientClass = new TSClass(builder);
-
-            ISet<string> propertiesToIgnore = new HashSet<string>()
-            {
-                "acceptLanguage",
-                "credentials",
-                "generateClientRequestId",
-                "longRunningOperationRetryTimeout",
-                "subscriptionId",
-            };
 
             IEnumerable<Property> serviceClientProperties = serviceClient.Properties
                 .Where((Property property) => !propertiesToIgnore.Contains(property.Name));
@@ -56,18 +59,47 @@ namespace AutoRest.TypeScript.Generators
             return builder.ToString();
         }
 
-        public static string AzureServiceClientConstructorParameterList(CodeModelTS serviceClient)
+        private static IEnumerable<Property> GetConstructorParameters(CodeModel serviceClient)
+        {
+            return serviceClient.Properties.Where((Property property) => !property.IsConstant && property.IsRequired && string.IsNullOrEmpty(property.DefaultValue));
+        }
+
+        public static string ServiceClientConstructorParameterList(CodeModelTS serviceClient)
         {
             TSBuilder builder = new TSBuilder();
             TSParameterList parameterList = new TSParameterList(builder);
 
-            IEnumerable<Property> constructorParameters = serviceClient.Properties.Where((Property property) => !property.IsConstant && property.IsRequired && string.IsNullOrEmpty(property.DefaultValue));
+            IEnumerable<Property> constructorParameters = GetConstructorParameters(serviceClient);
             foreach (Property property in constructorParameters)
             {
                 parameterList.Parameter(property.Name, property.ModelType.TSType(inModelsModule: false));
             }
 
-            Property subscriptionProperty = serviceClient.Properties.FirstOrDefault((Property property) => property.Name.EqualsIgnoreCase("subscriptionId"));
+            if (!serviceClient.IsCustomBaseUri)
+            {
+                parameterList.Parameter("baseUri", "string", optional: true);
+            }
+
+            string httpPipelineParameterType = (serviceClient.OptionalParameterTypeForClientConstructor == CodeModelTS.ServiceClientOptions
+                    ? $"msRest.{CodeModelTS.ServiceClientOptions}"
+                    : serviceClient.OptionalParameterTypeForClientConstructor);
+            parameterList.Parameter("options", httpPipelineParameterType, optional: true);
+
+            return builder.ToString();
+        }
+
+        public static string AzureServiceClientConstructorParameterList(CodeModelTS serviceClient)
+        {
+            TSBuilder builder = new TSBuilder();
+            TSParameterList parameterList = new TSParameterList(builder);
+
+            IEnumerable<Property> constructorParameters = GetConstructorParameters(serviceClient);
+            foreach (Property property in constructorParameters)
+            {
+                parameterList.Parameter(property.Name, property.ModelType.TSType(inModelsModule: false));
+            }
+
+            Property subscriptionProperty = GetProperty(serviceClient, "subscriptionId");
             if (subscriptionProperty == null)
             {
                 parameterList.Parameter("subscriptionId", "string");
@@ -86,6 +118,22 @@ namespace AutoRest.TypeScript.Generators
             return builder.ToString();
         }
 
+        private static Property GetProperty(CodeModel serviceClient, string propertyName)
+        {
+            return serviceClient.Properties.FirstOrDefault((Property property) => property.Name.EqualsIgnoreCase(propertyName));
+        }
+
+        private static string GetOptionsValueOrDefaultValue(string propertyName, CodeModel serviceClient)
+        {
+            Property property = GetProperty(serviceClient, propertyName);
+            string result = $"options.{propertyName}";
+            if (property != null && !string.IsNullOrEmpty(property.DefaultValue))
+            {
+                result += $" == undefined ? {property.DefaultValue} : options.{propertyName}";
+            }
+            return result;
+        }
+
         public static string AzureServiceClientSuperConstructorArgumentList(CodeModelTS serviceClient)
         {
             TSBuilder builder = new TSBuilder();
@@ -93,25 +141,48 @@ namespace AutoRest.TypeScript.Generators
 
             argumentList.Text("credentials");
 
-            Property subscriptionProperty = serviceClient.Properties.FirstOrDefault((Property property) => property.Name.EqualsIgnoreCase("subscriptionId"));
-            if (subscriptionProperty == null || string.IsNullOrEmpty(subscriptionProperty.DefaultValue))
+            Property subscriptionIdProperty = GetProperty(serviceClient, "subscriptionId");
+            if (subscriptionIdProperty == null || string.IsNullOrEmpty(subscriptionIdProperty.DefaultValue))
             {
                 argumentList.Text("subscriptionId");
             }
             else
             {
-                argumentList.Text(subscriptionProperty.DefaultValue);
+                argumentList.Text(subscriptionIdProperty.DefaultValue);
             }
 
-            argumentList.Object(options =>
+            argumentList.Text("options");
+
+            return builder.ToString();
+        }
+
+        public static string ServiceClientConstructorPropertyInitialization(CodeModelTS serviceClient, ISet<string> propertiesToIgnore)
+        {
+            TSBuilder builder = new TSBuilder();
+            TSBlock block = new TSBlock(builder);
+
+            IEnumerable<Property> propertiesToInitialize = serviceClient.Properties.Where((Property property) => !propertiesToIgnore.Contains(property.Name) && property.DefaultValue != null);
+            foreach (Property propertyToInitialize in propertiesToInitialize)
             {
-                options.TextProperty("acceptLanguage", "options.acceptLanguage");
-                options.TextProperty("generateClientRequestId", "options.generateClientRequestId");
-                options.TextProperty("longRunningOperationRetryTimeoutInSeconds", "options.longRunningOperationRetryTimeoutInSeconds");
-                options.TextProperty("rpRegistrationRetryTimeoutInSeconds", "options.rpRegistrationRetryTimeoutInSeconds");
-                options.TextProperty("noRetryPolicy", "options.noRetryPolicy");
-                options.TextProperty("nodeJsUserAgentPackage", $"options.nodeJsUserAgentPackage || \"{serviceClient.PackageName}/${serviceClient.PackageVersion}\"");
-            });
+                block.Line($"this.{propertyToInitialize.Name} = {propertyToInitialize.DefaultValue};");
+            }
+
+            block.Line($"this.baseUri = {(!serviceClient.IsCustomBaseUri ? "baseUri || " : "")}\"{serviceClient.BaseUrl}\";");
+
+            IEnumerable<Property> constructorParameters = GetConstructorParameters(serviceClient).Where((Property property) => !propertiesToIgnore.Contains(property.Name));
+            foreach (Property constructorParameter in constructorParameters)
+            {
+                block.Line($"this.{constructorParameter.Name} = {constructorParameter.Name};");
+            }
+
+            IEnumerable<Property> optionalParameters = serviceClient.Properties.Where(p => (!p.IsRequired || p.IsRequired && !string.IsNullOrEmpty(p.DefaultValue)) && !p.IsConstant && !propertiesToIgnore.Contains(p.Name) && !p.Name.EqualsIgnoreCase("apiVersion"));
+            foreach (Property optionalParameter in optionalParameters)
+            {
+                block.If($"options.{optionalParameter.Name} != undefined", ifBlock =>
+                {
+                    ifBlock.Line($"this.{optionalParameter.Name} = options.{optionalParameter.Name};");
+                });
+            }
 
             return builder.ToString();
         }

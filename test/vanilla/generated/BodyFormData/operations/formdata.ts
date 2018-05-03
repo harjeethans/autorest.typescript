@@ -12,8 +12,6 @@ import * as msRest from "ms-rest-js";
 import * as Mappers from "../models/mappers";
 import { AutoRestSwaggerBATFormDataService } from "../autoRestSwaggerBATFormDataService";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a Formdata. */
 export class Formdata {
   private readonly client: AutoRestSwaggerBATFormDataService;
@@ -45,10 +43,10 @@ export class Formdata {
     let client = this.client;
     // Validate
     try {
-      if (fileContent === null || fileContent === undefined) {
+      if (fileContent == undefined) {
         throw new Error('fileContent cannot be null or undefined and it must be of type readablestream.');
       }
-      if (fileName === null || fileName === undefined || typeof fileName.valueOf() !== 'string') {
+      if (fileName == undefined || typeof fileName !== "string") {
         throw new Error('fileName cannot be null or undefined and it must be of type string.');
       }
     } catch (error) {
@@ -64,9 +62,9 @@ export class Formdata {
     // Set Headers
     httpRequest.headers.set("Content-Type", "multipart/form-data");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -78,46 +76,35 @@ export class Formdata {
     if (fileName !== undefined && fileName !== null) {
       formData['fileName'] = fileName;
     }
-    httpRequest.formData = formData;
+    httpRequest.updateFromFormData(formData);
     // Send Request
-    httpRequest.rawResponse = true;
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
 
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(`Unexpected status code: ${statusCode}`);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            const resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    if (statusCode !== 200) {
+      let errorMessage = `Unexpected status code: ${statusCode}`;
+      let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(error) {
-      return Promise.reject(error);
+      const innerError: any = deserializedBody && deserializedBody.error || deserializedBody;
+      if (innerError && innerError.message) {
+        errorMessage = innerError.message;
+      }
+      throw new msRest.RestError(errorMessage, {
+        code: innerError.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: innerError
+      });
     }
-
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -137,7 +124,7 @@ export class Formdata {
     let client = this.client;
     // Validate
     try {
-      if (fileContent === null || fileContent === undefined) {
+      if (fileContent == undefined) {
         throw new Error('fileContent cannot be null or undefined and it must be of type readablestream.');
       }
     } catch (error) {
@@ -153,9 +140,9 @@ export class Formdata {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/octet-stream");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -163,44 +150,33 @@ export class Formdata {
     let requestContent = fileContent;
     httpRequest.body = requestContent;
     // Send Request
-    httpRequest.rawResponse = true;
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.pipeline(httpRequest);
-      let response = operationRes.response;
-      let statusCode = response.status;
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
+    const statusCode: number = httpResponse.statusCode;
 
-      if (statusCode !== 200) {
-        let error = new msRest.RestError(`Unexpected status code: ${statusCode}`);
-        error.statusCode = response.status;
-        error.request = msRest.stripRequest(httpRequest);
-        error.response = msRest.stripResponse(response);
-        let parsedErrorResponse = operationRes.parsedBody as { [key: string]: any };
-        try {
-          if (parsedErrorResponse) {
-            let internalError = null;
-            if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;
-            error.code = internalError ? internalError.code : parsedErrorResponse.code;
-            error.message = internalError ? internalError.message : parsedErrorResponse.message;
-          }
-          if (parsedErrorResponse !== null && parsedErrorResponse !== undefined) {
-            const resultMapper = Mappers.ErrorModel;
-            error.body = client.serializer.deserialize(resultMapper, parsedErrorResponse, 'error.body');
-          }
-        } catch (defaultError) {
-          error.message = `Error "${defaultError.message}" occurred in deserializing the responseBody ` +
-                           `- "${operationRes.bodyAsText}" for the default response.`;
-          return Promise.reject(error);
+    if (statusCode !== 200) {
+      let errorMessage = `Unexpected status code: ${statusCode}`;
+      let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+      try {
+        if (deserializedBody != undefined) {
+          const resultMapper = Mappers.ErrorModel;
+          deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
-
-        return Promise.reject(error);
+      } catch (deserializationError) {
+        errorMessage = `Error "${deserializationError.message}" occurred in deserializing the responseBody - "${JSON.stringify(deserializedBody)}" for the default response.`;
       }
-
-    } catch(error) {
-      return Promise.reject(error);
+      const innerError: any = deserializedBody && deserializedBody.error || deserializedBody;
+      if (innerError && innerError.message) {
+        errorMessage = innerError.message;
+      }
+      throw new msRest.RestError(errorMessage, {
+        code: innerError.code,
+        statusCode: httpResponse.statusCode,
+        request: httpRequest,
+        response: httpResponse,
+        body: innerError
+      });
     }
-
-    return Promise.resolve(operationRes);
+    return httpResponse;
   }
 
   /**
@@ -219,22 +195,22 @@ export class Formdata {
    *
    *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
    *
-   *                      {Response} [result]   - The deserialized result object if an error did not occur.
+   *                      {ReadableStream | NodeJS.ReadableStream | null} [result]   - The deserialized result object if an error did not occur.
    *
    *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
    *
    *                      {Response} [response] - The HTTP Response stream if an error did not occur.
    */
-  uploadFile(fileContent: ReadableStream, fileName: string): Promise<Response>;
-  uploadFile(fileContent: ReadableStream, fileName: string, options: msRest.RequestOptionsBase): Promise<Response>;
-  uploadFile(fileContent: ReadableStream, fileName: string, callback: msRest.ServiceCallback<Response>): void;
-  uploadFile(fileContent: ReadableStream, fileName: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Response>): void;
-  uploadFile(fileContent: ReadableStream, fileName: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Response>): any {
+  uploadFile(fileContent: ReadableStream, fileName: string): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  uploadFile(fileContent: ReadableStream, fileName: string, options: msRest.RequestOptionsBase): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  uploadFile(fileContent: ReadableStream, fileName: string, callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  uploadFile(fileContent: ReadableStream, fileName: string, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  uploadFile(fileContent: ReadableStream, fileName: string, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): any {
     if (!callback && typeof options === 'function') {
       callback = options;
       options = undefined;
     }
-    const cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>;
     if (!callback) {
       return this.uploadFileWithHttpOperationResponse(fileContent, fileName, options).then((httpResponse: msRest.HttpResponse) => {
         return Promise.resolve(httpResponse.readableStreamBody);
@@ -267,22 +243,22 @@ export class Formdata {
    *
    *                      {Error|ServiceError}  err        - The Error object if an error occurred, null otherwise.
    *
-   *                      {Response} [result]   - The deserialized result object if an error did not occur.
+   *                      {ReadableStream | NodeJS.ReadableStream | null} [result]   - The deserialized result object if an error did not occur.
    *
    *                      {WebResource} [request]  - The HTTP Request object if an error did not occur.
    *
    *                      {Response} [response] - The HTTP Response stream if an error did not occur.
    */
-  uploadFileViaBody(fileContent: ReadableStream): Promise<Response>;
-  uploadFileViaBody(fileContent: ReadableStream, options: msRest.RequestOptionsBase): Promise<Response>;
-  uploadFileViaBody(fileContent: ReadableStream, callback: msRest.ServiceCallback<Response>): void;
-  uploadFileViaBody(fileContent: ReadableStream, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<Response>): void;
-  uploadFileViaBody(fileContent: ReadableStream, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<Response>): any {
+  uploadFileViaBody(fileContent: ReadableStream): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  uploadFileViaBody(fileContent: ReadableStream, options: msRest.RequestOptionsBase): Promise<ReadableStream | NodeJS.ReadableStream | null>;
+  uploadFileViaBody(fileContent: ReadableStream, callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  uploadFileViaBody(fileContent: ReadableStream, options: msRest.RequestOptionsBase, callback: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): void;
+  uploadFileViaBody(fileContent: ReadableStream, options?: msRest.RequestOptionsBase, callback?: msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>): any {
     if (!callback && typeof options === 'function') {
       callback = options;
       options = undefined;
     }
-    const cb = callback as msRest.ServiceCallback<Response>;
+    const cb = callback as msRest.ServiceCallback<ReadableStream | NodeJS.ReadableStream | null>;
     if (!callback) {
       return this.uploadFileViaBodyWithHttpOperationResponse(fileContent, options).then((httpResponse: msRest.HttpResponse) => {
         return Promise.resolve(httpResponse.readableStreamBody);

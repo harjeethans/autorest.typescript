@@ -15,15 +15,7 @@ import * as msRestAzure from "ms-rest-azure-js";
 import * as operations from "./operations";
 
 class AutoRestPagingTestService extends msRestAzure.AzureServiceClient {
-
-  credentials: msRest.ServiceClientCredentials;
-
-  acceptLanguage: string;
-
-  longRunningOperationRetryTimeout: number;
-
-  generateClientRequestId: boolean;
-  baseUri: string;
+  public baseUri: string;
 
   // Operation groups
   paging: operations.Paging;
@@ -55,39 +47,14 @@ class AutoRestPagingTestService extends msRestAzure.AzureServiceClient {
    *
    */
   constructor(credentials: msRest.ServiceClientCredentials, subscriptionId: string, baseUri?: string, options?: Models.AutoRestPagingTestServiceOptions) {
-    if (credentials === null || credentials === undefined) {
-      throw new Error('\'credentials\' cannot be null.');
-    }
+  if (credentials === null || credentials === undefined) {
+    throw new Error('\'credentials\' cannot be null.');
+  }
 
-    if (!options) options = {};
+    super(credentials, subscriptionId, options);
 
-    super(credentials, subscriptionId, {
-      acceptLanguage: options.acceptLanguage,
-      generateClientRequestId: options.generateClientRequestId,
-      longRunningOperationRetryTimeoutInSeconds: options.longRunningOperationRetryTimeoutInSeconds,
-      rpRegistrationRetryTimeoutInSeconds: options.rpRegistrationRetryTimeoutInSeconds,
-      noRetryPolicy: options.noRetryPolicy,
-      nodeJsUserAgentPackage: options.nodeJsUserAgentPackage || "/$"
-    });
+    this.baseUri = baseUri || "http://localhost:3000";
 
-    this.acceptLanguage = 'en-US';
-    this.longRunningOperationRetryTimeout = 30;
-    this.generateClientRequestId = true;
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
-    this.credentials = credentials;
-
-    if(options.acceptLanguage !== null && options.acceptLanguage !== undefined) {
-      this.acceptLanguage = options.acceptLanguage;
-    }
-    if(options.longRunningOperationRetryTimeout !== null && options.longRunningOperationRetryTimeout !== undefined) {
-      this.longRunningOperationRetryTimeout = options.longRunningOperationRetryTimeout;
-    }
-    if(options.generateClientRequestId !== null && options.generateClientRequestId !== undefined) {
-      this.generateClientRequestId = options.generateClientRequestId;
-    }
     this.paging = new operations.Paging(this);
     this.serializer = new msRest.Serializer(Mappers);
   }

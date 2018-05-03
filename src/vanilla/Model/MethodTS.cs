@@ -290,7 +290,7 @@ namespace AutoRest.TypeScript.Model
                     // to read the stream.
                     if (result.Contains("ReadableStream"))
                     {
-                        result = "Response";
+                        result = "ReadableStream | NodeJS.ReadableStream | null";
                     }
                 }
                 return result;
@@ -310,10 +310,9 @@ namespace AutoRest.TypeScript.Model
                 TSBuilder builder = new TSBuilder();
                 TSBlock block = new TSBlock(builder);
 
-                block.Line("const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;");
                 block.ThrowNew(value => value.FunctionCall("msRest.RestError", argumentList =>
                 {
-                    argumentList.Text("errorMessage");
+                    argumentList.Text("`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`");
                     argumentList.Object(optionalArguments =>
                     {
                         optionalArguments.TextProperty("request", "httpRequest");
@@ -330,16 +329,16 @@ namespace AutoRest.TypeScript.Model
             var builder = new IndentedStringBuilder("  ");
             if (DefaultResponse.Body != null && DefaultResponse.Body.Name.RawValue.EqualsIgnoreCase("CloudError"))
             {
-                builder.AppendLine("if (parsedErrorResponse.error) parsedErrorResponse = parsedErrorResponse.error;")
-                       .AppendLine("if (parsedErrorResponse.code) error.code = parsedErrorResponse.code;")
-                       .AppendLine("if (parsedErrorResponse.message) error.message = parsedErrorResponse.message;");
+                builder.AppendLine("if (deserializedBody.error) deserializedBody = deserializedBody.error;")
+                       .AppendLine("if (deserializedBody.code) error.code = deserializedBody.code;")
+                       .AppendLine("if (deserializedBody.message) error.message = deserializedBody.message;");
             }
             else
             {
                 builder.AppendLine("let internalError = null;")
-                       .AppendLine("if (parsedErrorResponse.error) internalError = parsedErrorResponse.error;")
+                       .AppendLine("if (deserializedBody.error) internalError = deserializedBody.error;")
                        .AppendLine("error.code = internalError ? internalError.code : parsedErrorResponse.code;")
-                       .AppendLine("error.message = internalError ? internalError.message : parsedErrorResponse.message;");
+                       .AppendLine("errorMessage = internalError ? internalError.message : parsedErrorResponse.message;");
             }
             return builder.ToString();
         }
@@ -425,7 +424,7 @@ namespace AutoRest.TypeScript.Model
                     {
                         if (parameter.IsRequired)
                         {
-                            builder.AppendLine("if ({0} === null || {0} === undefined) {{", parameter.Name)
+                            builder.AppendLine("if ({0} == undefined) {{", parameter.Name)
                                      .Indent()
                                      .AppendLine("throw new Error('{0} cannot be null or undefined.');", parameter.Name)
                                    .Outdent()
@@ -437,7 +436,7 @@ namespace AutoRest.TypeScript.Model
                         builder.AppendLine(parameter.ModelType.ValidateType(this, parameter.Name, parameter.IsRequired));
                         if (parameter.Constraints != null && parameter.Constraints.Count > 0 && parameter.Location != ParameterLocation.Body)
                         {
-                            builder.AppendLine("if ({0} !== null && {0} !== undefined) {{", parameter.Name).Indent();
+                            builder.AppendLine("if ({0} != undefined) {{", parameter.Name).Indent();
                             builder = parameter.ModelType.AppendConstraintValidations(parameter.Name, parameter.Constraints, builder);
                             builder.Outdent().AppendLine("}");
                         }
@@ -454,24 +453,21 @@ namespace AutoRest.TypeScript.Model
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var builder = new IndentedStringBuilder("  ");
-            builder.AppendLine("try {")
-                   .Indent();
-            var deserializeBody = GetDeserializationString(type, valueReference, responseVariable);
-            if (!string.IsNullOrWhiteSpace(deserializeBody))
+            TSBuilder builder = new TSBuilder();
+            TSBlock block = new TSBlock(builder);
+
+            block.Try(tryBlock =>
             {
-                builder.AppendLine($"if ({responseVariable} != undefined) {{")
-                         .Indent()
-                         .AppendLine(deserializeBody)
-                       .Outdent()
-                       .AppendLine("}");
-            }
-            builder.Outdent()
-                   .AppendLine("} catch (error) {")
-                     .Indent()
-                     .AppendLine(DeserializationError)
-                   .Outdent()
-                   .AppendLine("}");
+                tryBlock.If($"{responseVariable} != undefined", ifBlock =>
+                {
+                    ifBlock.Line(GetDeserializationString(type, valueReference, responseVariable));
+                });
+            })
+            .Catch("error", catchBlock =>
+            {
+                catchBlock.Line(DeserializationError);
+            });
+            block.Line();
 
             return builder.ToString();
         }

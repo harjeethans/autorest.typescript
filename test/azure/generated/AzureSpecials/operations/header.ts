@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { AutoRestAzureSpecialParametersTestClient } from "../autoRestAzureSpecialParametersTestClient";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a Header. */
 export class Header {
   private readonly client: AutoRestAzureSpecialParametersTestClient;
@@ -44,10 +42,10 @@ export class Header {
     let client = this.client;
     // Validate
     try {
-      if (fooClientRequestId === null || fooClientRequestId === undefined || typeof fooClientRequestId.valueOf() !== 'string') {
+      if (fooClientRequestId == undefined || typeof fooClientRequestId !== "string") {
         throw new Error('fooClientRequestId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -73,18 +71,18 @@ export class Header {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -103,7 +101,6 @@ export class Header {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -130,7 +127,7 @@ export class Header {
       if (headerCustomNamedRequestIdParamGroupingParameters === null || headerCustomNamedRequestIdParamGroupingParameters === undefined) {
         throw new Error('headerCustomNamedRequestIdParamGroupingParameters cannot be null or undefined.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -141,7 +138,7 @@ export class Header {
       if (headerCustomNamedRequestIdParamGroupingParameters !== null && headerCustomNamedRequestIdParamGroupingParameters !== undefined)
       {
         fooClientRequestId = headerCustomNamedRequestIdParamGroupingParameters.fooClientRequestId;
-        if (fooClientRequestId === null || fooClientRequestId === undefined || typeof fooClientRequestId.valueOf() !== 'string') {
+        if (fooClientRequestId == undefined || typeof fooClientRequestId !== "string") {
           throw new Error('fooClientRequestId cannot be null or undefined and it must be of type string.');
         }
       }
@@ -168,18 +165,18 @@ export class Header {
       httpRequest.headers.set("foo-client-request-id", fooClientRequestId);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -198,7 +195,6 @@ export class Header {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -220,10 +216,10 @@ export class Header {
     let client = this.client;
     // Validate
     try {
-      if (fooClientRequestId === null || fooClientRequestId === undefined || typeof fooClientRequestId.valueOf() !== 'string') {
+      if (fooClientRequestId == undefined || typeof fooClientRequestId !== "string") {
         throw new Error('fooClientRequestId cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -249,18 +245,18 @@ export class Header {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200 && statusCode !== 404) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -278,10 +274,7 @@ export class Header {
         body: deserializedBody
       });
     }
-    httpResponse.deserializedBody = () => (statusCode === 200);
-    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
-    return httpResponse;
+    httpResponse.deserializedBody = () => Promise.resolve(statusCode === 200);return httpResponse;
   }
 
   /**

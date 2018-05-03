@@ -1,4 +1,5 @@
 @using AutoRest.Core.Utilities
+@using AutoRest.TypeScript.Generators
 @using AutoRest.TypeScript.Model
 @inherits AutoRest.Core.Template<MethodTS>
 
@@ -21,13 +22,7 @@
     });
   } else {
     msRest.promiseToCallback(this.@(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclaration)))((err: Error, httpResponse: msRest.HttpResponse) => {
-      if (err) {
-        cb(err);
-      } else {
-        @(Model.BuildResultInitialization("httpResponse")).then((httpResponseBody: any) => {
-          cb(err, httpResponseBody, httpResponse.request, httpResponse);
-        });
-      }
+      @(MethodGenerator.InvokeCallbackFromPromiseResult(Model))
     });
   }
 }

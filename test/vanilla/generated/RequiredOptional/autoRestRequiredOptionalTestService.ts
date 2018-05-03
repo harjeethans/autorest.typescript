@@ -14,10 +14,19 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestRequiredOptionalTestService extends msRest.ServiceClient {
-  requiredGlobalPath: string;
-  requiredGlobalQuery: string;
-  optionalGlobalQuery?: number;
-  baseUri: string;
+  /**
+   * number of items to skip
+   */
+  public requiredGlobalPath: string;
+  /**
+   * number of items to skip
+   */
+  public requiredGlobalQuery: string;
+  /**
+   * number of items to skip
+   */
+  public optionalGlobalQuery?: number;
+  public baseUri: string;
 
   // Operation groups
   implicit: operations.Implicit;
@@ -57,19 +66,15 @@ class AutoRestRequiredOptionalTestService extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
+    this.baseUri = baseUri || "http://localhost:3000";
     this.requiredGlobalPath = requiredGlobalPath;
     this.requiredGlobalQuery = requiredGlobalQuery;
-
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
-    if(options.optionalGlobalQuery !== null && options.optionalGlobalQuery !== undefined) {
+    if (options.optionalGlobalQuery != undefined) {
       this.optionalGlobalQuery = options.optionalGlobalQuery;
     }
+
     this.implicit = new operations.Implicit(this);
     this.explicit = new operations.Explicit(this);
     this.serializer = new msRest.Serializer(Mappers, false);

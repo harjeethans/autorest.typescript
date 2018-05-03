@@ -14,8 +14,11 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestComplexTestService extends msRest.ServiceClient {
-  apiVersion: string;
-  baseUri: string;
+  /**
+   * API ID.
+   */
+  public apiVersion: string;
+  public baseUri: string;
 
   // Operation groups
   basic: operations.BasicOperations;
@@ -49,15 +52,11 @@ class AutoRestComplexTestService extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
     this.apiVersion = '2014-04-01-preview';
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
+    this.baseUri = baseUri || "http://localhost:3000";
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     this.basic = new operations.BasicOperations(this);
     this.primitive = new operations.Primitive(this);
     this.arrayModel = new operations.ArrayModel(this);

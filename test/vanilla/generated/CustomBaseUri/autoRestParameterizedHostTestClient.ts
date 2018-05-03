@@ -14,8 +14,11 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestParameterizedHostTestClient extends msRest.ServiceClient {
-  host?: string;
-  baseUri: string;
+  /**
+   * A string value that is used as a global part of the parameterized host
+   */
+  public host?: string;
+  public baseUri: string;
 
   // Operation groups
   paths: operations.Paths;
@@ -42,15 +45,14 @@ class AutoRestParameterizedHostTestClient extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
     this.host = 'host';
-    this.baseUri = 'http://{accountName}{host}';
-
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
-    if(options.host !== null && options.host !== undefined) {
+    this.baseUri = "http://{accountName}{host}";
+    if (options.host != undefined) {
       this.host = options.host;
     }
+
     this.paths = new operations.Paths(this);
     this.serializer = new msRest.Serializer(Mappers, false);
   }

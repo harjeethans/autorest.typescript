@@ -19,11 +19,11 @@ var clientOptions: any = {};
 describe('typescript', function () {
   describe('Custom BaseUri Client', function () {
     clientOptions.host = 'host:3000';
-    var testClient = new AutoRestParameterizedHostTestClient(credentials, clientOptions);
+    var testClient = new AutoRestParameterizedHostTestClient(credentials, dummySubscriptionId, clientOptions);
     it('should return 200', function (done) {
       testClient.paths.getEmpty('local', function (error, result, request, response) {
         should.not.exist(error);
-        response.status.should.equal(200);
+        response.statusCode.should.equal(200);
         done();
       });
     });

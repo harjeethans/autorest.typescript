@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { AutoRestLongRunningOperationTestService } from "../autoRestLongRunningOperationTestService";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a LROsCustomHeader. */
 export class LROsCustomHeader {
   private readonly client: AutoRestLongRunningOperationTestService;
@@ -43,38 +41,28 @@ export class LROsCustomHeader {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async putAsyncRetrySucceededWithHttpOperationResponse(options?: Models.LROsCustomHeaderPutAsyncRetrySucceededOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async putAsyncRetrySucceededWithHttpOperationResponse(options?: Models.LROsCustomHeaderPutAsyncRetrySucceededOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Send request
-    let initialResult: msRest.HttpOperationResponse;
-    try {
-      initialResult = await this.beginPutAsyncRetrySucceededWithHttpOperationResponse(options);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.getLongRunningOperationResult(initialResult, options);
-      let httpRequest = operationRes.request;
-      let response = operationRes.response;
+    const initialResult: msRest.HttpResponse = await this.beginPutAsyncRetrySucceededWithHttpOperationResponse(options);
+    const httpResponse: msRest.HttpResponse = await client.getLongRunningOperationResult(initialResult);
+    const httpRequest = httpResponse.request;
 
-      // Deserialize Response
-      try {
-        if (deserializedBody != undefined) {
-          const resultMapper = Mappers.Product;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'operationRes.parsedBody');
-        }
-      } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
-          request: httpRequest,
-          response: httpResponse
-        });
+    // Deserialize Response
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.Product;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
-  } catch (err) {
-      return Promise.reject(err);
+    } catch (error) {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
+        request: httpRequest,
+        response: httpResponse
+      });
     }
-    return Promise.resolve(operationRes);
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
+    return httpResponse;
   }
 
 
@@ -94,38 +82,28 @@ export class LROsCustomHeader {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async put201CreatingSucceeded200WithHttpOperationResponse(options?: Models.LROsCustomHeaderPut201CreatingSucceeded200OptionalParams): Promise<msRest.HttpOperationResponse> {
+  async put201CreatingSucceeded200WithHttpOperationResponse(options?: Models.LROsCustomHeaderPut201CreatingSucceeded200OptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Send request
-    let initialResult: msRest.HttpOperationResponse;
-    try {
-      initialResult = await this.beginPut201CreatingSucceeded200WithHttpOperationResponse(options);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.getLongRunningOperationResult(initialResult, options);
-      let httpRequest = operationRes.request;
-      let response = operationRes.response;
+    const initialResult: msRest.HttpResponse = await this.beginPut201CreatingSucceeded200WithHttpOperationResponse(options);
+    const httpResponse: msRest.HttpResponse = await client.getLongRunningOperationResult(initialResult);
+    const httpRequest = httpResponse.request;
 
-      // Deserialize Response
-      try {
-        if (deserializedBody != undefined) {
-          const resultMapper = Mappers.Product;
-          operationRes.parsedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'operationRes.parsedBody');
-        }
-      } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
-          request: httpRequest,
-          response: httpResponse
-        });
+    // Deserialize Response
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    try {
+      if (deserializedBody != undefined) {
+        const resultMapper = Mappers.Product;
+        deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
       }
-  } catch (err) {
-      return Promise.reject(err);
+    } catch (error) {
+      throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
+        request: httpRequest,
+        response: httpResponse
+      });
     }
-    return Promise.resolve(operationRes);
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
+    return httpResponse;
   }
 
 
@@ -144,24 +122,16 @@ export class LROsCustomHeader {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async post202Retry200WithHttpOperationResponse(options?: Models.LROsCustomHeaderPost202Retry200OptionalParams): Promise<msRest.HttpOperationResponse> {
+  async post202Retry200WithHttpOperationResponse(options?: Models.LROsCustomHeaderPost202Retry200OptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Send request
-    let initialResult: msRest.HttpOperationResponse;
-    try {
-      initialResult = await this.beginPost202Retry200WithHttpOperationResponse(options);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.getLongRunningOperationResult(initialResult, options);
+    const initialResult: msRest.HttpResponse = await this.beginPost202Retry200WithHttpOperationResponse(options);
+    const httpResponse: msRest.HttpResponse = await client.getLongRunningOperationResult(initialResult);
 
-      // Deserialize Response
-  } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
+    // Deserialize Response
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
+    return httpResponse;
   }
 
 
@@ -181,24 +151,16 @@ export class LROsCustomHeader {
    *
    * @reject {Error|ServiceError} - The error object.
    */
-  async postAsyncRetrySucceededWithHttpOperationResponse(options?: Models.LROsCustomHeaderPostAsyncRetrySucceededOptionalParams): Promise<msRest.HttpOperationResponse> {
+  async postAsyncRetrySucceededWithHttpOperationResponse(options?: Models.LROsCustomHeaderPostAsyncRetrySucceededOptionalParams): Promise<msRest.HttpResponse> {
     let client = this.client;
     // Send request
-    let initialResult: msRest.HttpOperationResponse;
-    try {
-      initialResult = await this.beginPostAsyncRetrySucceededWithHttpOperationResponse(options);
-    } catch (err) {
-      return Promise.reject(err);
-    }
-    let operationRes: msRest.HttpOperationResponse;
-    try {
-      operationRes = await client.getLongRunningOperationResult(initialResult, options);
+    const initialResult: msRest.HttpResponse = await this.beginPostAsyncRetrySucceededWithHttpOperationResponse(options);
+    const httpResponse: msRest.HttpResponse = await client.getLongRunningOperationResult(initialResult);
 
-      // Deserialize Response
-  } catch (err) {
-      return Promise.reject(err);
-    }
-    return Promise.resolve(operationRes);
+    // Deserialize Response
+    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
+    return httpResponse;
   }
 
   /**
@@ -222,7 +184,7 @@ export class LROsCustomHeader {
     let product = (options && options.product !== undefined) ? options.product : undefined;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -245,9 +207,9 @@ export class LROsCustomHeader {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -267,11 +229,11 @@ export class LROsCustomHeader {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -291,21 +253,20 @@ export class LROsCustomHeader {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.Product;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -330,7 +291,7 @@ export class LROsCustomHeader {
     let product = (options && options.product !== undefined) ? options.product : undefined;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -353,9 +314,9 @@ export class LROsCustomHeader {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -375,11 +336,11 @@ export class LROsCustomHeader {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200 && statusCode !== 201) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -399,14 +360,14 @@ export class LROsCustomHeader {
     }
     // Deserialize Response
     if (statusCode === 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.Product;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
@@ -414,21 +375,20 @@ export class LROsCustomHeader {
     }
     // Deserialize Response
     if (statusCode === 201) {
+      deserializedBody = await httpResponse.deserializedBody();
       try {
         if (deserializedBody != undefined) {
           const resultMapper = Mappers.Product;
           deserializedBody = client.serializer.deserialize(resultMapper, deserializedBody, 'deserializedBody');
         }
       } catch (error) {
-        const errorMessage = `Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`;
-        throw new msRest.RestError(errorMessage, {
+        throw new msRest.RestError(`Error ${error} occurred in deserializing the responseBody - ${JSON.stringify(deserializedBody)}`, {
           request: httpRequest,
           response: httpResponse
         });
       }
     }
         httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -452,7 +412,7 @@ export class LROsCustomHeader {
     let product = (options && options.product !== undefined) ? options.product : undefined;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -475,9 +435,9 @@ export class LROsCustomHeader {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -497,11 +457,11 @@ export class LROsCustomHeader {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 202) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -520,7 +480,6 @@ export class LROsCustomHeader {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -545,7 +504,7 @@ export class LROsCustomHeader {
     let product = (options && options.product !== undefined) ? options.product : undefined;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -568,9 +527,9 @@ export class LROsCustomHeader {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -590,11 +549,11 @@ export class LROsCustomHeader {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 202) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -613,7 +572,6 @@ export class LROsCustomHeader {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

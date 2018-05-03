@@ -127,7 +127,7 @@ namespace AutoRest.TypeScript
             {
                 string modelTypeName = cm.Name + "Options";
                 var modelType = new CompositeTypeTS(modelTypeName);
-                modelType.BaseModelType = New<CompositeType>(new { Name = "ServiceClientOptions", SerializedName = "ServiceClientOptions" });
+                modelType.BaseModelType = New<CompositeType>(new { Name = CodeModelTS.ServiceClientOptions, SerializedName = CodeModelTS.ServiceClientOptions });
                 // We could end up having a property that is required but has a default value based on the above condition. If so then make it optional.
                 optionalProperitesOnClient.Where(p => p.IsRequired && !string.IsNullOrEmpty(p.DefaultValue)).ForEach(prop => prop.IsRequired = false);
                 modelType.AddRange(optionalProperitesOnClient);

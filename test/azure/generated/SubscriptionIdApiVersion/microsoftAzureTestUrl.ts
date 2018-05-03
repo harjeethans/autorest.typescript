@@ -15,19 +15,11 @@ import * as msRestAzure from "ms-rest-azure-js";
 import * as operations from "./operations";
 
 class MicrosoftAzureTestUrl extends msRestAzure.AzureServiceClient {
-
-  credentials: msRest.ServiceClientCredentials;
-
-  subscriptionId: string;
-
-  apiVersion: string;
-
-  acceptLanguage: string;
-
-  longRunningOperationRetryTimeout: number;
-
-  generateClientRequestId: boolean;
-  baseUri: string;
+  /**
+   * API Version with value '2014-04-01-preview'.
+   */
+  public apiVersion?: string;
+  public baseUri: string;
 
   // Operation groups
   group: operations.Group;
@@ -61,44 +53,18 @@ class MicrosoftAzureTestUrl extends msRestAzure.AzureServiceClient {
    *
    */
   constructor(credentials: msRest.ServiceClientCredentials, subscriptionId: string, baseUri?: string, options?: Models.MicrosoftAzureTestUrlOptions) {
-    if (credentials === null || credentials === undefined) {
-      throw new Error('\'credentials\' cannot be null.');
-    }
-    if (subscriptionId === null || subscriptionId === undefined) {
-      throw new Error('\'subscriptionId\' cannot be null.');
-    }
+  if (credentials === null || credentials === undefined) {
+    throw new Error('\'credentials\' cannot be null.');
+  }
+  if (subscriptionId === null || subscriptionId === undefined) {
+    throw new Error('\'subscriptionId\' cannot be null.');
+  }
 
-    if (!options) options = {};
-
-    super(credentials, subscriptionId, {
-      acceptLanguage: options.acceptLanguage,
-      generateClientRequestId: options.generateClientRequestId,
-      longRunningOperationRetryTimeoutInSeconds: options.longRunningOperationRetryTimeoutInSeconds,
-      rpRegistrationRetryTimeoutInSeconds: options.rpRegistrationRetryTimeoutInSeconds,
-      noRetryPolicy: options.noRetryPolicy,
-      nodeJsUserAgentPackage: options.nodeJsUserAgentPackage || "/$"
-    });
+    super(credentials, subscriptionId, options);
 
     this.apiVersion = '2014-04-01-preview';
-    this.acceptLanguage = 'en-US';
-    this.longRunningOperationRetryTimeout = 30;
-    this.generateClientRequestId = true;
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'https://management.azure.com/';
-    }
-    this.credentials = credentials;
-    this.subscriptionId = subscriptionId;
+    this.baseUri = baseUri || "https://management.azure.com/";
 
-    if(options.acceptLanguage !== null && options.acceptLanguage !== undefined) {
-      this.acceptLanguage = options.acceptLanguage;
-    }
-    if(options.longRunningOperationRetryTimeout !== null && options.longRunningOperationRetryTimeout !== undefined) {
-      this.longRunningOperationRetryTimeout = options.longRunningOperationRetryTimeout;
-    }
-    if(options.generateClientRequestId !== null && options.generateClientRequestId !== undefined) {
-      this.generateClientRequestId = options.generateClientRequestId;
-    }
     this.group = new operations.Group(this);
     this.serializer = new msRest.Serializer(Mappers);
   }

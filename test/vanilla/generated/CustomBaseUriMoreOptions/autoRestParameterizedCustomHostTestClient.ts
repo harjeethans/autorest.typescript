@@ -14,9 +14,15 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestParameterizedCustomHostTestClient extends msRest.ServiceClient {
-  subscriptionId: string;
-  dnsSuffix?: string;
-  baseUri: string;
+  /**
+   * The subscription id with value 'test12'.
+   */
+  public subscriptionId: string;
+  /**
+   * A string value that is used as a global part of the parameterized host. Default value 'host'.
+   */
+  public dnsSuffix?: string;
+  public baseUri: string;
 
   // Operation groups
   paths: operations.Paths;
@@ -48,16 +54,15 @@ class AutoRestParameterizedCustomHostTestClient extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
     this.dnsSuffix = 'host';
-    this.baseUri = '{vault}{secret}{dnsSuffix}';
+    this.baseUri = "{vault}{secret}{dnsSuffix}";
     this.subscriptionId = subscriptionId;
-
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
-    if(options.dnsSuffix !== null && options.dnsSuffix !== undefined) {
+    if (options.dnsSuffix != undefined) {
       this.dnsSuffix = options.dnsSuffix;
     }
+
     this.paths = new operations.Paths(this);
     this.serializer = new msRest.Serializer(Mappers, false);
   }

@@ -25,13 +25,7 @@ import * as msRestAzure from "ms-rest-azure-js";
 @{var requiredParameters = Model.Properties.Where(p => p.IsRequired && !p.IsConstant && string.IsNullOrEmpty(p.DefaultValue));}
 @{var optionalParameters = Model.Properties.Where(p => (!p.IsRequired || p.IsRequired && !string.IsNullOrEmpty(p.DefaultValue)) && !p.IsConstant && !p.Name.EqualsIgnoreCase("apiVersion"));}
 class @(Model.Name) extends msRestAzure.AzureServiceClient {
-
-@foreach (var property in Model.Properties)
-{
-  @EmptyLine
-  @:@(property.Name): @(property.ModelType.TSType(false));
-}
-  baseUri: string;
+  @(ServiceClientGenerator.ClassProperties(Model, ServiceClientGenerator.AzureServiceClientPropertiesToIgnore))
 @if (Model.MethodGroupModels.Any())
 {
   @EmptyLine
@@ -76,43 +70,15 @@ foreach (var methodGroup in Model.MethodGroupModels)
   constructor(@(ServiceClientGenerator.AzureServiceClientConstructorParameterList(Model))) {
 @foreach (var param in requiredParameters)
 {
-  @:  if (@(param.Name) === null || @(param.Name) === undefined) {
-  @:    throw new Error('\'@(param.Name)\' cannot be null.');
-  @:  }
+@:  if (@(param.Name) === null || @(param.Name) === undefined) {
+@:    throw new Error('\'@(param.Name)\' cannot be null.');
+@:  }
 }
-    @EmptyLine
-    if (!options) options = {};
     @EmptyLine
     super(@(ServiceClientGenerator.AzureServiceClientSuperConstructorArgumentList(Model)));
     @EmptyLine
-@foreach (var property in Model.Properties.Where(p => !p.Name.EqualsIgnoreCase("subscriptionId") && p.DefaultValue != null))
-{
-    @:this.@(property.Name) = @(property.DefaultValue);
-}
-  
-@if(!Model.IsCustomBaseUri)
-{
-    @:this.baseUri = baseUri as string;
-    @:if (!this.baseUri) {
-      @:this.baseUri = '@Model.BaseUrl';
-    @:}
-}
-else
-{
-    @:this.baseUri = '@Model.BaseUrl';
-}
-
-@foreach (var param in requiredParameters)
-{
-  @:  this.@(param.Name) = @(param.Name);
-}
-  @EmptyLine
-  @foreach (var property in optionalParameters)
-  { 
-    @:if(options.@(property.Name) !== null && options.@(property.Name) !== undefined) { 
-    @:  this.@(property.Name) = options.@(property.Name);
-    @:}
-  }
+    @(ServiceClientGenerator.ServiceClientConstructorPropertyInitialization(Model, ServiceClientGenerator.AzureServiceClientPropertiesToIgnore))
+    @EmptyLine
 
   @foreach (var methodGroup in Model.MethodGroupModels)
   {

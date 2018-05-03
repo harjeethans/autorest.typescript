@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { AutoRestParameterGroupingTestService } from "../autoRestParameterGroupingTestService";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a ParameterGrouping. */
 export class ParameterGrouping {
   private readonly client: AutoRestParameterGroupingTestService;
@@ -48,7 +46,7 @@ export class ParameterGrouping {
       if (parameterGroupingPostRequiredParameters === null || parameterGroupingPostRequiredParameters === undefined) {
         throw new Error('parameterGroupingPostRequiredParameters cannot be null or undefined.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -62,28 +60,28 @@ export class ParameterGrouping {
       if (parameterGroupingPostRequiredParameters !== null && parameterGroupingPostRequiredParameters !== undefined)
       {
         body = parameterGroupingPostRequiredParameters.body;
-        if (body === null || body === undefined || typeof body !== 'number') {
+        if (body == undefined || typeof body !== 'number') {
           throw new Error('body cannot be null or undefined and it must be of type number.');
         }
       }
       if (parameterGroupingPostRequiredParameters !== null && parameterGroupingPostRequiredParameters !== undefined)
       {
         customHeader = parameterGroupingPostRequiredParameters.customHeader;
-        if (customHeader !== null && customHeader !== undefined && typeof customHeader.valueOf() !== 'string') {
+        if (customHeader != undefined && typeof customHeader !== "string") {
           throw new Error('customHeader must be of type string.');
         }
       }
       if (parameterGroupingPostRequiredParameters !== null && parameterGroupingPostRequiredParameters !== undefined)
       {
         query = parameterGroupingPostRequiredParameters.query;
-        if (query !== null && query !== undefined && typeof query !== 'number') {
+        if (query != undefined && typeof query !== 'number') {
           throw new Error('query must be of type number.');
         }
       }
       if (parameterGroupingPostRequiredParameters !== null && parameterGroupingPostRequiredParameters !== undefined)
       {
         path = parameterGroupingPostRequiredParameters.path;
-        if (path === null || path === undefined || typeof path.valueOf() !== 'string') {
+        if (path == undefined || typeof path !== "string") {
           throw new Error('path cannot be null or undefined and it must be of type string.');
         }
       }
@@ -114,9 +112,9 @@ export class ParameterGrouping {
       httpRequest.headers.set("customHeader", customHeader);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -142,11 +140,11 @@ export class ParameterGrouping {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -165,7 +163,6 @@ export class ParameterGrouping {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -186,7 +183,7 @@ export class ParameterGrouping {
     let parameterGroupingPostOptionalParameters = (options && options.parameterGroupingPostOptionalParameters !== undefined) ? options.parameterGroupingPostOptionalParameters : undefined;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -198,14 +195,14 @@ export class ParameterGrouping {
       if (parameterGroupingPostOptionalParameters !== null && parameterGroupingPostOptionalParameters !== undefined)
       {
         customHeader = parameterGroupingPostOptionalParameters.customHeader;
-        if (customHeader !== null && customHeader !== undefined && typeof customHeader.valueOf() !== 'string') {
+        if (customHeader != undefined && typeof customHeader !== "string") {
           throw new Error('customHeader must be of type string.');
         }
       }
       if (parameterGroupingPostOptionalParameters !== null && parameterGroupingPostOptionalParameters !== undefined)
       {
         query = parameterGroupingPostOptionalParameters.query;
-        if (query !== null && query !== undefined && typeof query !== 'number') {
+        if (query != undefined && typeof query !== 'number') {
           throw new Error('query must be of type number.');
         }
       }
@@ -235,18 +232,18 @@ export class ParameterGrouping {
       httpRequest.headers.set("customHeader", customHeader);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -265,7 +262,6 @@ export class ParameterGrouping {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -287,7 +283,7 @@ export class ParameterGrouping {
     let parameterGroupingPostMultiParamGroupsSecondParamGroup = (options && options.parameterGroupingPostMultiParamGroupsSecondParamGroup !== undefined) ? options.parameterGroupingPostMultiParamGroupsSecondParamGroup : undefined;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -301,28 +297,28 @@ export class ParameterGrouping {
       if (firstParameterGroup !== null && firstParameterGroup !== undefined)
       {
         headerOne = firstParameterGroup.headerOne;
-        if (headerOne !== null && headerOne !== undefined && typeof headerOne.valueOf() !== 'string') {
+        if (headerOne != undefined && typeof headerOne !== "string") {
           throw new Error('headerOne must be of type string.');
         }
       }
       if (firstParameterGroup !== null && firstParameterGroup !== undefined)
       {
         queryOne = firstParameterGroup.queryOne;
-        if (queryOne !== null && queryOne !== undefined && typeof queryOne !== 'number') {
+        if (queryOne != undefined && typeof queryOne !== 'number') {
           throw new Error('queryOne must be of type number.');
         }
       }
       if (parameterGroupingPostMultiParamGroupsSecondParamGroup !== null && parameterGroupingPostMultiParamGroupsSecondParamGroup !== undefined)
       {
         headerTwo = parameterGroupingPostMultiParamGroupsSecondParamGroup.headerTwo;
-        if (headerTwo !== null && headerTwo !== undefined && typeof headerTwo.valueOf() !== 'string') {
+        if (headerTwo != undefined && typeof headerTwo !== "string") {
           throw new Error('headerTwo must be of type string.');
         }
       }
       if (parameterGroupingPostMultiParamGroupsSecondParamGroup !== null && parameterGroupingPostMultiParamGroupsSecondParamGroup !== undefined)
       {
         queryTwo = parameterGroupingPostMultiParamGroupsSecondParamGroup.queryTwo;
-        if (queryTwo !== null && queryTwo !== undefined && typeof queryTwo !== 'number') {
+        if (queryTwo != undefined && typeof queryTwo !== 'number') {
           throw new Error('queryTwo must be of type number.');
         }
       }
@@ -358,18 +354,18 @@ export class ParameterGrouping {
       httpRequest.headers.set("header-two", headerTwo);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -388,7 +384,6 @@ export class ParameterGrouping {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -409,7 +404,7 @@ export class ParameterGrouping {
     let firstParameterGroup = (options && options.firstParameterGroup !== undefined) ? options.firstParameterGroup : undefined;
     // Validate
     try {
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -421,14 +416,14 @@ export class ParameterGrouping {
       if (firstParameterGroup !== null && firstParameterGroup !== undefined)
       {
         headerOne = firstParameterGroup.headerOne;
-        if (headerOne !== null && headerOne !== undefined && typeof headerOne.valueOf() !== 'string') {
+        if (headerOne != undefined && typeof headerOne !== "string") {
           throw new Error('headerOne must be of type string.');
         }
       }
       if (firstParameterGroup !== null && firstParameterGroup !== undefined)
       {
         queryOne = firstParameterGroup.queryOne;
-        if (queryOne !== null && queryOne !== undefined && typeof queryOne !== 'number') {
+        if (queryOne != undefined && typeof queryOne !== 'number') {
           throw new Error('queryOne must be of type number.');
         }
       }
@@ -458,18 +453,18 @@ export class ParameterGrouping {
       httpRequest.headers.set("header-one", headerOne);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -488,7 +483,6 @@ export class ParameterGrouping {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

@@ -12,8 +12,6 @@ import * as msRest from "ms-rest-js";
 import * as Mappers from "../models/mappers";
 import { AutoRestParameterFlattening } from "../autoRestParameterFlattening";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a AvailabilitySets. */
 export class AvailabilitySets {
   private readonly client: AutoRestParameterFlattening;
@@ -47,13 +45,13 @@ export class AvailabilitySets {
     let client = this.client;
     // Validate
     try {
-      if (resourceGroupName === null || resourceGroupName === undefined || typeof resourceGroupName.valueOf() !== 'string') {
+      if (resourceGroupName == undefined || typeof resourceGroupName !== "string") {
         throw new Error('resourceGroupName cannot be null or undefined and it must be of type string.');
       }
-      if (avset === null || avset === undefined || typeof avset.valueOf() !== 'string') {
+      if (avset == undefined || typeof avset !== "string") {
         throw new Error('avset cannot be null or undefined and it must be of type string.');
       }
-      if (avset !== null && avset !== undefined) {
+      if (avset != undefined) {
         if (avset.length > 80)
         {
           throw new Error('"avset" should satisfy the constraint - "MaxLength": 80');
@@ -63,7 +61,7 @@ export class AvailabilitySets {
         throw new Error('tags cannot be null or undefined and it must be of type object.');
       }
       for(let valueElement in tags) {
-        if (tags[valueElement] !== null && tags[valueElement] !== undefined && typeof tags[valueElement].valueOf() !== 'string') {
+        if (tags[valueElement] != undefined && typeof tags[valueElement] !== "string") {
           throw new Error('tags[valueElement] must be of type string.');
         }
       }
@@ -87,9 +85,9 @@ export class AvailabilitySets {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
@@ -109,11 +107,11 @@ export class AvailabilitySets {
     }
     httpRequest.body = requestContent;
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
       } catch (deserializationError) {
@@ -128,7 +126,6 @@ export class AvailabilitySets {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

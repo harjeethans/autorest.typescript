@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { AutoRestAzureSpecialParametersTestClient } from "../autoRestAzureSpecialParametersTestClient";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a Odata. */
 export class Odata {
   private readonly client: AutoRestAzureSpecialParametersTestClient;
@@ -45,16 +43,16 @@ export class Odata {
     let orderby = (options && options.orderby !== undefined) ? options.orderby : undefined;
     // Validate
     try {
-      if (filter !== null && filter !== undefined && typeof filter.valueOf() !== 'string') {
+      if (filter != undefined && typeof filter !== "string") {
         throw new Error('filter must be of type string.');
       }
-      if (top !== null && top !== undefined && typeof top !== 'number') {
+      if (top != undefined && typeof top !== 'number') {
         throw new Error('top must be of type number.');
       }
-      if (orderby !== null && orderby !== undefined && typeof orderby.valueOf() !== 'string') {
+      if (orderby != undefined && typeof orderby !== "string") {
         throw new Error('orderby must be of type string.');
       }
-      if (this.client.acceptLanguage !== null && this.client.acceptLanguage !== undefined && typeof this.client.acceptLanguage.valueOf() !== 'string') {
+      if (this.client.acceptLanguage != undefined && typeof this.client.acceptLanguage !== "string") {
         throw new Error('this.client.acceptLanguage must be of type string.');
       }
     } catch (error) {
@@ -86,18 +84,18 @@ export class Odata {
       httpRequest.headers.set("accept-language", this.client.acceptLanguage);
     }
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -116,7 +114,6 @@ export class Odata {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

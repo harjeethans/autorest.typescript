@@ -1,4 +1,3 @@
-@using System
 @using System.Linq
 @using AutoRest.Core.Utilities
 @using AutoRest.TypeScript.Model
@@ -15,37 +14,28 @@ else
 <text>
 @EmptyLine
 @(Model.GenerateMethodDocumentation(MethodTS.MethodFlavor.HttpOperationResponse))
-async @(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclarationTS(true, true))): Promise<msRest.HttpOperationResponse> {
+async @(Model.Name.ToCamelCase())WithHttpOperationResponse(@(Model.MethodParameterDeclarationTS(true, true))): Promise<msRest.HttpResponse> {
   let client = @(Model.ClientReference);
   // Send request
-  let initialResult: msRest.HttpOperationResponse;
-  try {
-    initialResult = await this.begin@(Model.Name.ToPascalCase())WithHttpOperationResponse(@(Model.MethodParameterDeclaration));
-  } catch (err) {
-    return Promise.reject(err);
-  }
-  let operationRes: msRest.HttpOperationResponse;
-  try {
-    operationRes = await client.getLongRunningOperationResult(initialResult, options);
+  const initialResult: msRest.HttpResponse = await this.begin@(Model.Name.ToPascalCase())WithHttpOperationResponse(@(Model.MethodParameterDeclaration));
+  const httpResponse: msRest.HttpResponse = await client.getLongRunningOperationResult(initialResult);
 @if (Model.ReturnType.Body != null)
 {
-    @:let httpRequest = operationRes.request;
-    @:let response = operationRes.response;
+  @:const httpRequest = httpResponse.request;
 }
-    @EmptyLine
-    // Deserialize Response
+  @EmptyLine
+  // Deserialize Response
+  let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
 @if (Model.ReturnType.Body != null)
 {
-    @:@(Model.DeserializeResponse(Model.ReturnType.Body, "operationRes.parsedBody"))
+  @:@(Model.DeserializeResponse(Model.ReturnType.Body, "deserializedBody"))
 }
 @if (Model.ReturnType.Body != null && Model.DefaultResponse.Body != null && !Model.Responses.Any())
 {
-    @:@(Model.DeserializeResponse(Model.DefaultResponse.Body, "operationRes.parsedBody"))
+  @:@(Model.DeserializeResponse(Model.DefaultResponse.Body, "deserializedBody"))
 }
-} catch (err) {
-    return Promise.reject(err);
-  }
-  return Promise.resolve(operationRes);
+  httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
+  return httpResponse;
 }
 </text>
 }

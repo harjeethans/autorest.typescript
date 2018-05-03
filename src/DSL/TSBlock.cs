@@ -37,6 +37,7 @@ namespace AutoRest.TypeScript.DSL
                     throw new Exception("Once a block's return statement has been emitted, no further statements can be emitted.");
 
                 case State.If:
+                case State.Try:
                     builder.Line();
                     break;
             }
@@ -51,10 +52,20 @@ namespace AutoRest.TypeScript.DSL
             }
         }
 
+        public void Line()
+        {
+            builder.Line();
+        }
+
         public void Line(string text)
         {
             SetCurrentState(State.Statements);
             builder.Line(text);
+        }
+
+        public void Indent(Action action)
+        {
+            builder.Indent(action);
         }
 
         public void ConstObjectVariable(string variableName, string variableType, Action<TSObject> valueAction)
@@ -69,6 +80,12 @@ namespace AutoRest.TypeScript.DSL
         {
             SetCurrentState(State.If);
             return builder.If(condition, thenAction);
+        }
+
+        public TSTryBlock Try(Action<TSBlock> tryAction)
+        {
+            SetCurrentState(State.Try);
+            return builder.Try(tryAction);
         }
 
         public void Return(Action<TSValue> returnValueAction)

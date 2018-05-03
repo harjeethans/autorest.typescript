@@ -25,7 +25,7 @@ describe('typescript', function () {
       'as a query parameter in the request url', function (done) {
         testClient.group.getSampleResourceGroup('testgroup101', function (error, result, request, response) {
           should.not.exist(error);
-          response.status.should.equal(200);
+          response.statusCode.should.equal(200);
           done();
         });
       });

@@ -14,7 +14,7 @@ import * as Mappers from "./models/mappers";
 import * as operations from "./operations";
 
 class AutoRestHttpInfrastructureTestService extends msRest.ServiceClient {
-  baseUri: string;
+  public baseUri: string;
 
   // Operation groups
   httpFailure: operations.HttpFailure;
@@ -47,14 +47,10 @@ class AutoRestHttpInfrastructureTestService extends msRest.ServiceClient {
 
     if (!options) options = {};
 
-    super(undefined, options);
+    super(options);
 
-    this.baseUri = baseUri as string;
-    if (!this.baseUri) {
-      this.baseUri = 'http://localhost:3000';
-    }
+    this.baseUri = baseUri || "http://localhost:3000";
 
-    this.addUserAgentInfo(`${packageName}/${packageVersion}`);
     this.httpFailure = new operations.HttpFailure(this);
     this.httpSuccess = new operations.HttpSuccess(this);
     this.httpRedirects = new operations.HttpRedirects(this);

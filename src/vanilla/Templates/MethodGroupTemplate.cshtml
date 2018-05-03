@@ -1,5 +1,4 @@
-﻿@using System.Linq;
-@using AutoRest.TypeScript.vanilla.Templates
+﻿@using AutoRest.TypeScript.vanilla.Templates
 @inherits AutoRest.Core.Template<AutoRest.TypeScript.Model.MethodGroupTS>
 /*
 @Header(" * ")
@@ -16,8 +15,6 @@ import { @(Model.CodeModel.Name) } from "../@(Model.CodeModel.Name.Substring(0, 
 {
 @:import * as moment from "moment";
 }
-@EmptyLine
-const WebResource = msRest.WebResource;
 @EmptyLine
 /** Class representing a @(Model.TypeName). */
 export class @(Model.TypeName) {

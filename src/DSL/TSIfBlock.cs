@@ -14,7 +14,7 @@ namespace AutoRest.TypeScript.DSL
 
         public TSIfBlock ElseIf(string condition, Action<TSBlock> bodyAction)
         {
-            builder.Text($" else if ({condition}) {{");
+            builder.Line($" else if ({condition}) {{");
             builder.Indent(() =>
             {
                 using (TSBlock block = new TSBlock(builder))
@@ -22,13 +22,13 @@ namespace AutoRest.TypeScript.DSL
                     bodyAction.Invoke(block);
                 }
             });
-            builder.Text("}}");
+            builder.Text($"}}");
             return new TSIfBlock(builder);
         }
 
         public void Else(Action<TSBlock> bodyAction)
         {
-            builder.Text($" else {{");
+            builder.Line($" else {{");
             builder.Indent(() =>
             {
                 using (TSBlock block = new TSBlock(builder))
@@ -36,7 +36,7 @@ namespace AutoRest.TypeScript.DSL
                     bodyAction.Invoke(block);
                 }
             });
-            builder.Text("}}");
+            builder.Text($"}}");
             SetCurrentState(State.Statements);
         }
     }

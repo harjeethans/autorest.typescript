@@ -13,8 +13,6 @@ import * as Models from "../models";
 import * as Mappers from "../models/mappers";
 import { AutoRestUrlTestService } from "../autoRestUrlTestService";
 
-const WebResource = msRest.WebResource;
-
 /** Class representing a PathItems. */
 export class PathItems {
   private readonly client: AutoRestUrlTestService;
@@ -53,22 +51,22 @@ export class PathItems {
     let pathItemStringQuery = (options && options.pathItemStringQuery !== undefined) ? options.pathItemStringQuery : undefined;
     // Validate
     try {
-      if (localStringPath === null || localStringPath === undefined || typeof localStringPath.valueOf() !== 'string') {
+      if (localStringPath == undefined || typeof localStringPath !== "string") {
         throw new Error('localStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (localStringQuery !== null && localStringQuery !== undefined && typeof localStringQuery.valueOf() !== 'string') {
+      if (localStringQuery != undefined && typeof localStringQuery !== "string") {
         throw new Error('localStringQuery must be of type string.');
       }
-      if (pathItemStringPath === null || pathItemStringPath === undefined || typeof pathItemStringPath.valueOf() !== 'string') {
+      if (pathItemStringPath == undefined || typeof pathItemStringPath !== "string") {
         throw new Error('pathItemStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (pathItemStringQuery !== null && pathItemStringQuery !== undefined && typeof pathItemStringQuery.valueOf() !== 'string') {
+      if (pathItemStringQuery != undefined && typeof pathItemStringQuery !== "string") {
         throw new Error('pathItemStringQuery must be of type string.');
       }
-      if (this.client.globalStringPath === null || this.client.globalStringPath === undefined || typeof this.client.globalStringPath.valueOf() !== 'string') {
+      if (this.client.globalStringPath == undefined || typeof this.client.globalStringPath !== "string") {
         throw new Error('this.client.globalStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.globalStringQuery !== null && this.client.globalStringQuery !== undefined && typeof this.client.globalStringQuery.valueOf() !== 'string') {
+      if (this.client.globalStringQuery != undefined && typeof this.client.globalStringQuery !== "string") {
         throw new Error('this.client.globalStringQuery must be of type string.');
       }
     } catch (error) {
@@ -100,18 +98,18 @@ export class PathItems {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -130,7 +128,6 @@ export class PathItems {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -160,22 +157,22 @@ export class PathItems {
     let pathItemStringQuery = (options && options.pathItemStringQuery !== undefined) ? options.pathItemStringQuery : undefined;
     // Validate
     try {
-      if (localStringPath === null || localStringPath === undefined || typeof localStringPath.valueOf() !== 'string') {
+      if (localStringPath == undefined || typeof localStringPath !== "string") {
         throw new Error('localStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (localStringQuery !== null && localStringQuery !== undefined && typeof localStringQuery.valueOf() !== 'string') {
+      if (localStringQuery != undefined && typeof localStringQuery !== "string") {
         throw new Error('localStringQuery must be of type string.');
       }
-      if (pathItemStringPath === null || pathItemStringPath === undefined || typeof pathItemStringPath.valueOf() !== 'string') {
+      if (pathItemStringPath == undefined || typeof pathItemStringPath !== "string") {
         throw new Error('pathItemStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (pathItemStringQuery !== null && pathItemStringQuery !== undefined && typeof pathItemStringQuery.valueOf() !== 'string') {
+      if (pathItemStringQuery != undefined && typeof pathItemStringQuery !== "string") {
         throw new Error('pathItemStringQuery must be of type string.');
       }
-      if (this.client.globalStringPath === null || this.client.globalStringPath === undefined || typeof this.client.globalStringPath.valueOf() !== 'string') {
+      if (this.client.globalStringPath == undefined || typeof this.client.globalStringPath !== "string") {
         throw new Error('this.client.globalStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.globalStringQuery !== null && this.client.globalStringQuery !== undefined && typeof this.client.globalStringQuery.valueOf() !== 'string') {
+      if (this.client.globalStringQuery != undefined && typeof this.client.globalStringQuery !== "string") {
         throw new Error('this.client.globalStringQuery must be of type string.');
       }
     } catch (error) {
@@ -207,18 +204,18 @@ export class PathItems {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -237,7 +234,6 @@ export class PathItems {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -267,22 +263,22 @@ export class PathItems {
     let pathItemStringQuery = (options && options.pathItemStringQuery !== undefined) ? options.pathItemStringQuery : undefined;
     // Validate
     try {
-      if (localStringPath === null || localStringPath === undefined || typeof localStringPath.valueOf() !== 'string') {
+      if (localStringPath == undefined || typeof localStringPath !== "string") {
         throw new Error('localStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (localStringQuery !== null && localStringQuery !== undefined && typeof localStringQuery.valueOf() !== 'string') {
+      if (localStringQuery != undefined && typeof localStringQuery !== "string") {
         throw new Error('localStringQuery must be of type string.');
       }
-      if (pathItemStringPath === null || pathItemStringPath === undefined || typeof pathItemStringPath.valueOf() !== 'string') {
+      if (pathItemStringPath == undefined || typeof pathItemStringPath !== "string") {
         throw new Error('pathItemStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (pathItemStringQuery !== null && pathItemStringQuery !== undefined && typeof pathItemStringQuery.valueOf() !== 'string') {
+      if (pathItemStringQuery != undefined && typeof pathItemStringQuery !== "string") {
         throw new Error('pathItemStringQuery must be of type string.');
       }
-      if (this.client.globalStringPath === null || this.client.globalStringPath === undefined || typeof this.client.globalStringPath.valueOf() !== 'string') {
+      if (this.client.globalStringPath == undefined || typeof this.client.globalStringPath !== "string") {
         throw new Error('this.client.globalStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.globalStringQuery !== null && this.client.globalStringQuery !== undefined && typeof this.client.globalStringQuery.valueOf() !== 'string') {
+      if (this.client.globalStringQuery != undefined && typeof this.client.globalStringQuery !== "string") {
         throw new Error('this.client.globalStringQuery must be of type string.');
       }
     } catch (error) {
@@ -314,18 +310,18 @@ export class PathItems {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -344,7 +340,6 @@ export class PathItems {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 
@@ -374,22 +369,22 @@ export class PathItems {
     let pathItemStringQuery = (options && options.pathItemStringQuery !== undefined) ? options.pathItemStringQuery : undefined;
     // Validate
     try {
-      if (localStringPath === null || localStringPath === undefined || typeof localStringPath.valueOf() !== 'string') {
+      if (localStringPath == undefined || typeof localStringPath !== "string") {
         throw new Error('localStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (localStringQuery !== null && localStringQuery !== undefined && typeof localStringQuery.valueOf() !== 'string') {
+      if (localStringQuery != undefined && typeof localStringQuery !== "string") {
         throw new Error('localStringQuery must be of type string.');
       }
-      if (pathItemStringPath === null || pathItemStringPath === undefined || typeof pathItemStringPath.valueOf() !== 'string') {
+      if (pathItemStringPath == undefined || typeof pathItemStringPath !== "string") {
         throw new Error('pathItemStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (pathItemStringQuery !== null && pathItemStringQuery !== undefined && typeof pathItemStringQuery.valueOf() !== 'string') {
+      if (pathItemStringQuery != undefined && typeof pathItemStringQuery !== "string") {
         throw new Error('pathItemStringQuery must be of type string.');
       }
-      if (this.client.globalStringPath === null || this.client.globalStringPath === undefined || typeof this.client.globalStringPath.valueOf() !== 'string') {
+      if (this.client.globalStringPath == undefined || typeof this.client.globalStringPath !== "string") {
         throw new Error('this.client.globalStringPath cannot be null or undefined and it must be of type string.');
       }
-      if (this.client.globalStringQuery !== null && this.client.globalStringQuery !== undefined && typeof this.client.globalStringQuery.valueOf() !== 'string') {
+      if (this.client.globalStringQuery != undefined && typeof this.client.globalStringQuery !== "string") {
         throw new Error('this.client.globalStringQuery must be of type string.');
       }
     } catch (error) {
@@ -421,18 +416,18 @@ export class PathItems {
     // Set Headers
     httpRequest.headers.set("Content-Type", "application/json; charset=utf-8");
     if(options && options.customHeaders) {
-      for(let headerName in options.customHeaders) {
+      for(const headerName in options.customHeaders) {
         if (options.customHeaders.hasOwnProperty(headerName)) {
-          httpRequest.headers[headerName] = options.customHeaders[headerName];
+          httpRequest.headers.set(headerName, options.customHeaders[headerName]);
         }
       }
     }
     // Send Request
-    let httpResponse: msRest.HttpResponse;
-    httpResponse = await client.sendRequest(httpRequest);
+    const httpResponse: msRest.HttpResponse = await client.sendRequest(httpRequest);
     const statusCode: number = httpResponse.statusCode;
-    let deserializedBody: { [key: string]: any } = await httpResponse.deserializedBody();
+    let deserializedBody: { [key: string]: any } | undefined;
     if (statusCode !== 200) {
+      deserializedBody = await httpResponse.deserializedBody();
       let errorMessage: string = deserializedBody.error && deserializedBody.error.message || deserializedBody.message;
       try {
         if (deserializedBody != undefined) {
@@ -451,7 +446,6 @@ export class PathItems {
       });
     }
     httpResponse.deserializedBody = () => Promise.resolve(deserializedBody);
-
     return httpResponse;
   }
 

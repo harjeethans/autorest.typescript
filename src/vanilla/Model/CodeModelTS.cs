@@ -9,13 +9,14 @@ using System.Text;
 using AutoRest.Core.Model;
 using AutoRest.Core.Utilities;
 using AutoRest.Extensions;
-using AutoRest.TypeScript.DSL;
 using Newtonsoft.Json;
 
 namespace AutoRest.TypeScript.Model
 {
     public class CodeModelTS : CodeModel
     {
+        public const string ServiceClientOptions = nameof(ServiceClientOptions);
+
         public CodeModelTS()
         {
         }
@@ -234,7 +235,7 @@ namespace AutoRest.TypeScript.Model
         {
             get
             {
-                return _optionalParameterTypeForClientConstructor ?? "ServiceClientOptions";
+                return _optionalParameterTypeForClientConstructor ?? ServiceClientOptions;
             }
 
             set
@@ -272,9 +273,9 @@ namespace AutoRest.TypeScript.Model
         public virtual string ConstructRuntimeImportForModelIndex()
         {
             var builder = new IndentedStringBuilder("  ");
-            if (OptionalParameterTypeForClientConstructor != "ServiceClientOptions")
+            if (OptionalParameterTypeForClientConstructor != ServiceClientOptions)
             {
-                builder.Append("import { ServiceClientOptions } from \"ms-rest-js\";");
+                builder.Append($"import {{ {ServiceClientOptions} }} from \"ms-rest-js\";");
             }
             return builder.ToString();
         }

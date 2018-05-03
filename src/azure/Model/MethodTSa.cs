@@ -51,7 +51,7 @@ namespace AutoRest.TypeScript.Azure.Model
                 if (HttpMethod == HttpMethod.Head && ReturnType.Body != null)
                 {
                     HttpStatusCode code = Responses.Keys.FirstOrDefault(AzureExtensions.HttpHeadStatusCodeSuccessFunc);
-                    result = $"httpResponse.deserializedBody = () => (statusCode === {(int)code});";
+                    result = $"httpResponse.deserializedBody = () => Promise.resolve(statusCode === {(int)code});";
                 }
                 return result;
             }
