@@ -589,7 +589,6 @@ namespace AutoRest.TypeScript.Model
                     GenerateRequestParameterPath(requestBodyObject, Body, parameterTransformations);
                     requestBodyObject.Property("mapper", requestBodyMapper => ClientModelExtensions.ConstructRequestBodyMapper(requestBodyMapper, Body));
                 });
-                operationSpec.QuotedStringProperty("contentType", RequestContentType);
             }
             else
             {
@@ -597,8 +596,11 @@ namespace AutoRest.TypeScript.Model
                 if (formDataParameters.Any())
                 {
                     GenerateRequestParameters(operationSpec, "formDataParameters", parameterTransformations, formDataParameters);
-                    operationSpec.QuotedStringProperty("contentType", RequestContentType);
                 }
+            }
+            if (!string.IsNullOrEmpty(RequestContentType))
+            {
+                operationSpec.QuotedStringProperty("contentType", RequestContentType);
             }
 
             operationSpec.ObjectProperty("responses", responses =>
