@@ -135,6 +135,7 @@ const getOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -169,6 +170,7 @@ const paramGetOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {

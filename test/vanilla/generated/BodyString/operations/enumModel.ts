@@ -287,6 +287,7 @@ export class EnumModel {
 const getNotExpandableOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/enum/notExpandable",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -339,6 +340,7 @@ const putNotExpandableOperationSpec: msRest.OperationSpec = {
 const getReferencedOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/enum/Referenced",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -391,6 +393,7 @@ const putReferencedOperationSpec: msRest.OperationSpec = {
 const getReferencedConstantOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/enum/ReferencedConstant",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.RefColorConstant

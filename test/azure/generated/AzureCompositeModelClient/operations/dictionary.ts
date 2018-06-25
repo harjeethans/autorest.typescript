@@ -289,6 +289,7 @@ const getValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.DictionaryWrapper
@@ -352,6 +353,7 @@ const getEmptyOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.DictionaryWrapper
@@ -415,6 +417,7 @@ const getNullOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.DictionaryWrapper
@@ -441,6 +444,7 @@ const getNotProvidedOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.DictionaryWrapper

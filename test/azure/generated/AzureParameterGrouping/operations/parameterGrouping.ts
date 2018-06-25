@@ -325,6 +325,7 @@ const postOptionalOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -405,6 +406,7 @@ const postMultiParamGroupsOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -458,6 +460,7 @@ const postSharedParameterGroupObjectOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {

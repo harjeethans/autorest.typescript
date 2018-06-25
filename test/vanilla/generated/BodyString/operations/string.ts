@@ -592,6 +592,7 @@ export class String {
 const getNullOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/null",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -636,6 +637,7 @@ const putNullOperationSpec: msRest.OperationSpec = {
 const getEmptyOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/empty",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -678,6 +680,7 @@ const putEmptyOperationSpec: msRest.OperationSpec = {
 const getMbcsOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/mbcs",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -720,6 +723,7 @@ const putMbcsOperationSpec: msRest.OperationSpec = {
 const getWhitespaceOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/whitespace",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -762,6 +766,7 @@ const putWhitespaceOperationSpec: msRest.OperationSpec = {
 const getNotProvidedOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/notProvided",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -781,6 +786,7 @@ const getNotProvidedOperationSpec: msRest.OperationSpec = {
 const getBase64EncodedOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/base64Encoding",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -800,6 +806,7 @@ const getBase64EncodedOperationSpec: msRest.OperationSpec = {
 const getBase64UrlEncodedOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/base64UrlEncoding",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -842,6 +849,7 @@ const putBase64UrlEncodedOperationSpec: msRest.OperationSpec = {
 const getNullBase64UrlEncodedOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "string/nullBase64UrlEncoding",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {

@@ -122,6 +122,7 @@ export class Inheritance {
 const getValidOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/inheritance/valid",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Siamese

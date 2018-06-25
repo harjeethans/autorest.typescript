@@ -2659,6 +2659,7 @@ const beginDeleteNonRetry400OperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       headersMapper: Mappers.LROSADsDeleteNonRetry400Headers
@@ -2685,6 +2686,7 @@ const beginDelete202NonRetry400OperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       headersMapper: Mappers.LROSADsDelete202NonRetry400Headers
@@ -2711,6 +2713,7 @@ const beginDeleteAsyncRelativeRetry400OperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       headersMapper: Mappers.LROSADsDeleteAsyncRelativeRetry400Headers
@@ -2946,6 +2949,7 @@ const beginDelete204SucceededOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     204: {},
     default: {
@@ -2970,6 +2974,7 @@ const beginDeleteAsyncRelativeRetryNoStatusOperationSpec: msRest.OperationSpec =
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       headersMapper: Mappers.LROSADsDeleteAsyncRelativeRetryNoStatusHeaders
@@ -3169,6 +3174,7 @@ const beginDelete202RetryInvalidHeaderOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       headersMapper: Mappers.LROSADsDelete202RetryInvalidHeaderHeaders
@@ -3195,6 +3201,7 @@ const beginDeleteAsyncRelativeRetryInvalidHeaderOperationSpec: msRest.OperationS
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       headersMapper: Mappers.LROSADsDeleteAsyncRelativeRetryInvalidHeaderHeaders
@@ -3221,6 +3228,7 @@ const beginDeleteAsyncRelativeRetryInvalidJsonPollingOperationSpec: msRest.Opera
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       headersMapper: Mappers.LROSADsDeleteAsyncRelativeRetryInvalidJsonPollingHeaders

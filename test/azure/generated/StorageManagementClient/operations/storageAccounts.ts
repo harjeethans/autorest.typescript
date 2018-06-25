@@ -729,6 +729,7 @@ const deleteMethodOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     204: {},
@@ -798,6 +799,7 @@ const getPropertiesOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.StorageAccount
@@ -946,6 +948,7 @@ const listKeysOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.StorageAccountKeys
@@ -996,6 +999,7 @@ const listOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.StorageAccountListResult
@@ -1056,6 +1060,7 @@ const listByResourceGroupOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.StorageAccountListResult

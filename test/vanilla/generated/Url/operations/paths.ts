@@ -1171,6 +1171,7 @@ const getBooleanTrueOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1197,6 +1198,7 @@ const getBooleanFalseOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1223,6 +1225,7 @@ const getIntOneMillionOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1249,6 +1252,7 @@ const getIntNegativeOneMillionOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1275,6 +1279,7 @@ const getTenBillionOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1301,6 +1306,7 @@ const getNegativeTenBillionOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1327,6 +1333,7 @@ const floatScientificPositiveOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1353,6 +1360,7 @@ const floatScientificNegativeOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1379,6 +1387,7 @@ const doubleDecimalPositiveOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1405,6 +1414,7 @@ const doubleDecimalNegativeOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1431,6 +1441,7 @@ const stringUnicodeOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1457,6 +1468,7 @@ const stringUrlEncodedOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1483,6 +1495,7 @@ const stringEmptyOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1507,6 +1520,7 @@ const stringNullOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     400: {},
     default: {
@@ -1536,6 +1550,7 @@ const enumValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1565,6 +1580,7 @@ const enumNullOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     400: {},
     default: {
@@ -1589,6 +1605,7 @@ const byteMultiByteOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1615,6 +1632,7 @@ const byteEmptyOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1639,6 +1657,7 @@ const byteNullOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     400: {},
     default: {
@@ -1665,6 +1684,7 @@ const dateValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1689,6 +1709,7 @@ const dateNullOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     400: {},
     default: {
@@ -1715,6 +1736,7 @@ const dateTimeValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1739,6 +1761,7 @@ const dateTimeNullOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     400: {},
     default: {
@@ -1763,6 +1786,7 @@ const base64UrlOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1793,6 +1817,7 @@ const arrayCsvInPathOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1817,6 +1842,7 @@ const unixTimeUrlOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {

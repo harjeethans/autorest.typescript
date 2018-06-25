@@ -363,6 +363,7 @@ const getMethodPathValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -400,6 +401,7 @@ const getPathPathValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -439,6 +441,7 @@ const getSwaggerPathValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -476,6 +479,7 @@ const getMethodQueryValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -515,6 +519,7 @@ const getMethodQueryNullOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -552,6 +557,7 @@ const getPathQueryValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -591,6 +597,7 @@ const getSwaggerQueryValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {

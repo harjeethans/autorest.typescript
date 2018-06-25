@@ -359,6 +359,7 @@ export class HttpRetry {
 const head408OperationSpec: msRest.OperationSpec = {
   httpMethod: "HEAD",
   path: "http/retry/408",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -421,6 +422,7 @@ const patch500OperationSpec: msRest.OperationSpec = {
 const get502OperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "http/retry/502",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {

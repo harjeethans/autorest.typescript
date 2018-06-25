@@ -283,6 +283,7 @@ const validationOfMethodParametersOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Product
@@ -390,6 +391,7 @@ const getWithConstantInPathOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {}

@@ -153,6 +153,7 @@ export class HttpFailure {
 const getEmptyErrorOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "http/failure/emptybody/error",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -172,6 +173,7 @@ const getEmptyErrorOperationSpec: msRest.OperationSpec = {
 const getNoModelErrorOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "http/failure/nomodel/error",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {
@@ -189,6 +191,7 @@ const getNoModelErrorOperationSpec: msRest.OperationSpec = {
 const getNoModelEmptyOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "http/failure/nomodel/empty",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: {

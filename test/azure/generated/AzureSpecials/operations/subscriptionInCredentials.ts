@@ -269,6 +269,7 @@ const postMethodGlobalValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -305,6 +306,7 @@ const postMethodGlobalNullOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -353,6 +355,7 @@ const postMethodGlobalNotProvidedValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -389,6 +392,7 @@ const postPathGlobalValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -425,6 +429,7 @@ const postSwaggerGlobalValidOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {

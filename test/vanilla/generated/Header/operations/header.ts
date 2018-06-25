@@ -1455,6 +1455,7 @@ const paramExistingKeyOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1467,6 +1468,7 @@ const paramExistingKeyOperationSpec: msRest.OperationSpec = {
 const responseExistingKeyOperationSpec: msRest.OperationSpec = {
   httpMethod: "POST",
   path: "header/response/existingkey",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseExistingKeyHeaders
@@ -1493,6 +1495,7 @@ const paramProtectedKeyOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1505,6 +1508,7 @@ const paramProtectedKeyOperationSpec: msRest.OperationSpec = {
 const responseProtectedKeyOperationSpec: msRest.OperationSpec = {
   httpMethod: "POST",
   path: "header/response/protectedkey",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseProtectedKeyHeaders
@@ -1541,6 +1545,7 @@ const paramIntegerOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1565,6 +1570,7 @@ const responseIntegerOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseIntegerHeaders
@@ -1601,6 +1607,7 @@ const paramLongOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1625,6 +1632,7 @@ const responseLongOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseLongHeaders
@@ -1661,6 +1669,7 @@ const paramFloatOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1685,6 +1694,7 @@ const responseFloatOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseFloatHeaders
@@ -1721,6 +1731,7 @@ const paramDoubleOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1745,6 +1756,7 @@ const responseDoubleOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseDoubleHeaders
@@ -1781,6 +1793,7 @@ const paramBoolOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1805,6 +1818,7 @@ const responseBoolOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseBoolHeaders
@@ -1843,6 +1857,7 @@ const paramStringOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1867,6 +1882,7 @@ const responseStringOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseStringHeaders
@@ -1903,6 +1919,7 @@ const paramDateOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1927,6 +1944,7 @@ const responseDateOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseDateHeaders
@@ -1963,6 +1981,7 @@ const paramDatetimeOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1987,6 +2006,7 @@ const responseDatetimeOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseDatetimeHeaders
@@ -2025,6 +2045,7 @@ const paramDatetimeRfc1123OperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -2049,6 +2070,7 @@ const responseDatetimeRfc1123OperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseDatetimeRfc1123Headers
@@ -2085,6 +2107,7 @@ const paramDurationOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -2109,6 +2132,7 @@ const responseDurationOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseDurationHeaders
@@ -2145,6 +2169,7 @@ const paramByteOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -2169,6 +2194,7 @@ const responseByteOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseByteHeaders
@@ -2212,6 +2238,7 @@ const paramEnumOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -2236,6 +2263,7 @@ const responseEnumOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderResponseEnumHeaders
@@ -2250,6 +2278,7 @@ const responseEnumOperationSpec: msRest.OperationSpec = {
 const customRequestIdOperationSpec: msRest.OperationSpec = {
   httpMethod: "POST",
   path: "header/custom/x-ms-client-request-id/9C4D50EE-2D56-4CD3-8152-34347DC9F2B0",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {

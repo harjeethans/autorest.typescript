@@ -1250,6 +1250,7 @@ const getSinglePagesOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -1315,6 +1316,7 @@ const getMultiplePagesOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -1380,6 +1382,7 @@ const getOdataMultiplePagesOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.OdataProductResult
@@ -1458,6 +1461,7 @@ const getMultiplePagesWithOffsetOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -1484,6 +1488,7 @@ const getMultiplePagesRetryFirstOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -1510,6 +1515,7 @@ const getMultiplePagesRetrySecondOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -1536,6 +1542,7 @@ const getSinglePagesFailureOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -1562,6 +1569,7 @@ const getMultiplePagesFailureOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -1588,6 +1596,7 @@ const getMultiplePagesFailureUriOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -1638,6 +1647,7 @@ const getMultiplePagesFragmentNextLinkOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.OdataProductResult
@@ -1694,6 +1704,7 @@ const getMultiplePagesFragmentWithGroupingNextLinkOperationSpec: msRest.Operatio
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.OdataProductResult
@@ -1755,6 +1766,7 @@ const nextFragmentOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.OdataProductResult
@@ -1822,6 +1834,7 @@ const nextFragmentWithGroupingOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.OdataProductResult
@@ -1887,6 +1900,7 @@ const beginGetMultiplePagesLROOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       bodyMapper: Mappers.ProductResult
@@ -1927,6 +1941,7 @@ const getSinglePagesNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -2006,6 +2021,7 @@ const getMultiplePagesNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -2085,6 +2101,7 @@ const getOdataMultiplePagesNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.OdataProductResult
@@ -2164,6 +2181,7 @@ const getMultiplePagesWithOffsetNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -2204,6 +2222,7 @@ const getMultiplePagesRetryFirstNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -2244,6 +2263,7 @@ const getMultiplePagesRetrySecondNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -2284,6 +2304,7 @@ const getSinglePagesFailureNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -2324,6 +2345,7 @@ const getMultiplePagesFailureNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -2364,6 +2386,7 @@ const getMultiplePagesFailureUriNextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ProductResult
@@ -2443,6 +2466,7 @@ const beginGetMultiplePagesLRONextOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     202: {
       bodyMapper: Mappers.ProductResult

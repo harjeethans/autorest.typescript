@@ -222,6 +222,7 @@ export class Polymorphicrecursive {
 const getValidOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/polymorphicrecursive/valid",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Fish

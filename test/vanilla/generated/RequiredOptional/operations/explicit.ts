@@ -1112,6 +1112,7 @@ const postRequiredIntegerHeaderOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     default: {
       bodyMapper: Mappers.ErrorModel
@@ -1137,6 +1138,7 @@ const postOptionalIntegerHeaderOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1251,6 +1253,7 @@ const postRequiredStringHeaderOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     default: {
       bodyMapper: Mappers.ErrorModel
@@ -1276,6 +1279,7 @@ const postOptionalStringHeaderOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {
@@ -1490,6 +1494,7 @@ const postRequiredArrayHeaderOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     default: {
       bodyMapper: Mappers.ErrorModel
@@ -1521,6 +1526,7 @@ const postOptionalArrayHeaderOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {},
     default: {

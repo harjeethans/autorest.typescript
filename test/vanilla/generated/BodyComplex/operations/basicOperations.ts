@@ -282,6 +282,7 @@ export class BasicOperations {
 const getValidOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/basic/valid",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Basic
@@ -330,6 +331,7 @@ const putValidOperationSpec: msRest.OperationSpec = {
 const getInvalidOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/basic/invalid",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Basic
@@ -344,6 +346,7 @@ const getInvalidOperationSpec: msRest.OperationSpec = {
 const getEmptyOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/basic/empty",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Basic
@@ -358,6 +361,7 @@ const getEmptyOperationSpec: msRest.OperationSpec = {
 const getNullOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/basic/null",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Basic
@@ -372,6 +376,7 @@ const getNullOperationSpec: msRest.OperationSpec = {
 const getNotProvidedOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/basic/notprovided",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Basic

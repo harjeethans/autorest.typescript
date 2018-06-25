@@ -200,6 +200,7 @@ const customNamedRequestIdOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderCustomNamedRequestIdHeaders
@@ -239,6 +240,7 @@ const customNamedRequestIdParamGroupingOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderCustomNamedRequestIdParamGroupingHeaders
@@ -275,6 +277,7 @@ const customNamedRequestIdHeadOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       headersMapper: Mappers.HeaderCustomNamedRequestIdHeadHeaders

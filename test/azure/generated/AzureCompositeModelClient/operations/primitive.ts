@@ -996,6 +996,7 @@ const getIntOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.IntWrapper
@@ -1054,6 +1055,7 @@ const getLongOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.LongWrapper
@@ -1112,6 +1114,7 @@ const getFloatOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.FloatWrapper
@@ -1170,6 +1173,7 @@ const getDoubleOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.DoubleWrapper
@@ -1228,6 +1232,7 @@ const getBoolOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.BooleanWrapper
@@ -1286,6 +1291,7 @@ const getStringOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.StringWrapper
@@ -1344,6 +1350,7 @@ const getDateOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.DateWrapper
@@ -1402,6 +1409,7 @@ const getDateTimeOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.DatetimeWrapper
@@ -1460,6 +1468,7 @@ const getDateTimeRfc1123OperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.Datetimerfc1123Wrapper
@@ -1518,6 +1527,7 @@ const getDurationOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.DurationWrapper
@@ -1581,6 +1591,7 @@ const getByteOperationSpec: msRest.OperationSpec = {
       }
     }
   ],
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ByteWrapper

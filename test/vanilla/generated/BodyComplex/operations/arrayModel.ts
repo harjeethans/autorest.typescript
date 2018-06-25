@@ -236,6 +236,7 @@ export class ArrayModel {
 const getValidOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/array/valid",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ArrayWrapper
@@ -275,6 +276,7 @@ const putValidOperationSpec: msRest.OperationSpec = {
 const getEmptyOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/array/empty",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ArrayWrapper
@@ -314,6 +316,7 @@ const putEmptyOperationSpec: msRest.OperationSpec = {
 const getNotProvidedOperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "complex/array/notprovided",
+  contentType: "application/json; charset=utf-8",
   responses: {
     200: {
       bodyMapper: Mappers.ArrayWrapper

@@ -195,6 +195,7 @@ export class HttpServerFailure {
 const head501OperationSpec: msRest.OperationSpec = {
   httpMethod: "HEAD",
   path: "http/failure/server/501",
+  contentType: "application/json; charset=utf-8",
   responses: {
     default: {
       bodyMapper: Mappers.ErrorModel
@@ -206,6 +207,7 @@ const head501OperationSpec: msRest.OperationSpec = {
 const get501OperationSpec: msRest.OperationSpec = {
   httpMethod: "GET",
   path: "http/failure/server/501",
+  contentType: "application/json; charset=utf-8",
   responses: {
     default: {
       bodyMapper: Mappers.ErrorModel
