@@ -809,7 +809,7 @@ namespace AutoRest.TypeScript
                 {
                     typeObject.Property("element", element =>
                     {
-                        ConstructMapper(element, sequence.ElementType, sequence.ElementType.DeclarationName + "ElementType", null, false, false, isXML, isCaseSensitive);
+                        ConstructMapper(element, sequence.ElementType, null, null, false, false, isXML, isCaseSensitive);
                     });
                 });
             }
@@ -819,7 +819,7 @@ namespace AutoRest.TypeScript
                 {
                     typeObject.ObjectProperty("value", dictionaryValue =>
                     {
-                        ConstructMapper(dictionaryValue, dictionary.ValueType, dictionary.ValueType.DeclarationName + "ElementType", null, false, false, isXML, isCaseSensitive);
+                        ConstructMapper(dictionaryValue, dictionary.ValueType, null, null, false, false, isXML, isCaseSensitive);
                         applyConstraints(dictionaryValue);
                     });
                 });
